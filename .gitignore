@@ -39,3 +39,13 @@
 
 # debug information files
 *.dwo
+
+# Build artifacts
+*build/
+*CMakeUserPresets.json
+
+# Coverage reports
+coverage/
+
+# VS Code settings
+.vscode/
