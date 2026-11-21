@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 
 /**
  * @namespace types
@@ -23,5 +24,24 @@ namespace types
   {
     size_t width = 0;
     size_t height = 0;
+  };
+
+  /**
+   * @struct VirtualMemory
+   * @brief Representation of a virtual memory block.
+   *
+   * @param int32_t File descriptor associated with the memory block.
+   * @param types::Size The size of the memory block.
+   * @param size_t The length of the memory block.
+   * @param size_t The stride of the memory block.
+   * @param uint64_t The offset within the memory block.
+   */
+  struct VirtualMemory
+  {
+    types::Size size;
+    size_t length = 0;
+    size_t stride = 0;
+    uint64_t offset = 0;
+    int fd = -1;
   };
 } // namespace types
