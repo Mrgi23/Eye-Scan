@@ -10,6 +10,12 @@ set(SOURCES_DIR "${ROOT_DIR}/src" CACHE PATH "C++ Sources")
 # ===== Dependencies =====
 find_package(PkgConfig REQUIRED)
 
+# ----- EGL -----
+find_package(OpenGL REQUIRED COMPONENTS EGL)
+
+# ----- GLES2 -----
+pkg_check_modules(GLES2 REQUIRED IMPORTED_TARGET glesv2)
+
 # ----- libcamera -----
 pkg_check_modules(LIBCAMERA REQUIRED IMPORTED_TARGET libcamera)
 
