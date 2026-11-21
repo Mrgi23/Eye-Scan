@@ -8,6 +8,11 @@ set(INCLUDE_DIR "${ROOT_DIR}/inc" CACHE PATH "C++ Headers")
 set(SOURCES_DIR "${ROOT_DIR}/src" CACHE PATH "C++ Sources")
 
 # ===== Dependencies =====
+find_package(PkgConfig REQUIRED)
+
+# ----- libcamera -----
+pkg_check_modules(LIBCAMERA REQUIRED IMPORTED_TARGET libcamera)
+
 # ----- OpenCV (armv8) -----
 find_package(OpenCV-armv8)
 

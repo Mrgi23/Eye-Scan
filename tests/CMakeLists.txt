@@ -32,6 +32,7 @@ target_link_libraries(
   GTest::gtest_main
   GTest::gmock
   OpenCV-armv8::OpenCV-armv8
+  PkgConfig::LIBCAMERA
 )
 
 # ===== Coverage =====
