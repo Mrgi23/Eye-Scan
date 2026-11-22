@@ -1,7 +1,7 @@
-# Eye-Scan
+# Eye Scan
 
 ## Description
-**Eye-Scan** is open-source iris recognition application written in modern `C++` and `OpenCV`,
+**Eye Scan** is open-source iris recognition application written in modern `C++` and `OpenCV`,
 designed primarily for development on **Raspberry Pi**-based hardware. The project provides a complete biometric identification pipeline, from iris localization and normalization to feature extraction and template matching.
 
 The implementation is driven by the requirements of embedded hardware, with emphasis on performance, maintainability, and reliability while remaining suitable for research and educational purposes.
@@ -13,6 +13,10 @@ The implementation is driven by the requirements of embedded hardware, with emph
 - Binary template generation and matching
 - Local-first database architecture with offline operation
 - **Azure** cloud synchronization for distributed deployments
+
+## Documentation
+- [**System Architecture**](docs/ARCHITECTURE.md) – Structural breakdown of the system.
+- [**Hardware Components**](docs/HARDWARE.md) – Details on the hardware setup and components used.
 
 ## Authors and Acknowledgments
 ### Author
@@ -39,8 +43,10 @@ For full legal terms, see the [LICENSE](LICENSE) file.
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
-
 ## Contributing
 This repository does not accept direct contributions. However, you are free to fork and modify the code for your own use.
 
 If you encounter any issues, feel free to open an issue, but please understand that fixes and feature requests may not be actively addressed.
+
+## Next Steps
+For a detailed breakdown of the system’s architecture, see the [System Architecture](docs/ARCHITECTURE.md).
