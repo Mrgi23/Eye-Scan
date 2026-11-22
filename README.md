@@ -17,6 +17,7 @@ The implementation is driven by the requirements of embedded hardware, with emph
 ## Documentation
 - [**System Architecture**](docs/ARCHITECTURE.md) – Structural breakdown of the system.
 - [**Hardware Components**](docs/HARDWARE.md) – Details on the hardware setup and components used.
+- [**Testing & Validation**](docs/TESTING.md) – Information on testing procedures and validation methods.
 
 ## Authors and Acknowledgments
 ### Author
