@@ -4,6 +4,9 @@
 set(CMAKE_BUILD_TYPE Release CACHE STRING "Build Type")
 
 # ===== Set Variables =====
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 set(INCLUDE_DIR "${ROOT_DIR}/inc" CACHE PATH "C++ Headers")
 set(SOURCES_DIR "${ROOT_DIR}/src" CACHE PATH "C++ Sources")
 
@@ -21,6 +24,9 @@ pkg_check_modules(LIBCAMERA REQUIRED IMPORTED_TARGET libcamera)
 
 # ----- OpenCV (armv8) -----
 find_package(OpenCV-armv8)
+
+# ----- Qt6 -----
+find_package(Qt6 REQUIRED COMPONENTS Core Gui OpenGLWidgets Widgets)
 
 # ===== Sources =====
 file(
