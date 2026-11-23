@@ -1,0 +1,160 @@
+name: CI
+description: Continuous Integration workflow for the project
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [develop]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  TEST_DIR: "tests"
+  BUILD_DIR: "tests/build/Release"
+  COVERAGE_DIR: "coverage"
+
+jobs:
+  test:
+    name: Build & Test Code
+    runs-on: ubuntu-24.04-arm
+
+    container:
+      image: debian:trixie
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup C++ Toolchain
+        uses: ./.github/actions
+
+      - name: Configure & Build
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+
+          cd "${TEST_DIR}"
+          conan install . --build=missing
+          cmake -G Ninja --preset conan-release
+          cmake --build --preset conan-release --parallel $(( $(nproc) / 2 ))
+
+      - name: Run Tests
+        run: |
+          set -euo pipefail
+
+          mkdir -p "${COVERAGE_DIR}"
+          cd "${BUILD_DIR}"
+          ./tests --gtest_output=xml:results.xml
+
+          lcov --capture --directory . -o raw.info --ignore-errors inconsistent,inconsistent --ignore-errors mismatch,mismatch --rc geninfo_unexecuted_blocks=1 > /dev/null
+          lcov --extract raw.info "${GITHUB_WORKSPACE}/inc/*" "${GITHUB_WORKSPACE}/src/*" -o coverage.info --ignore-errors unused,unused > /dev/null
+          sed -i "/D0Ev/d" coverage.info
+          genhtml coverage.info -o "${GITHUB_WORKSPACE}/${COVERAGE_DIR}/"
+
+      - name: Upload Coverage Report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ env.BUILD_DIR }}/coverage.info
+          report_type: coverage
+          disable_search: true
+          fail_ci_if_error: true
+
+      - name: Upload Test Results to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ env.BUILD_DIR }}/results.xml
+          report_type: test_results
+
+      - name: Upload HTML Coverage Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: ${{ env.COVERAGE_DIR }}
+          retention-days: 1
+          if-no-files-found: error
+
+  pages:
+    name: Publish Report to GitHub Pages
+    runs-on: ubuntu-24.04-arm
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Coverage Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare Pages Content
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf public
+          mkdir -p public
+          cp -r artifacts/coverage-html/. public || true
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  tags:
+    name: Create Release Tag
+    runs-on: ubuntu-24.04-arm
+
+    permissions:
+      contents: write
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read Commit Message
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          VERSION="$(echo "$COMMIT_MSG" | grep -Eiom1 'Release v[0-9]+\.[0-9]+\.[0-9]+' || true)"
+
+          if [[ -n "$VERSION" ]]; then
+            NEW_TAG=$(echo "$VERSION" | sed 's/Release //')
+            git tag -d "$NEW_TAG" 2>/dev/null || true
+            git push origin ":refs/tags/$NEW_TAG" 2>/dev/null || true
+            git tag -a "$NEW_TAG" -m "Release $NEW_TAG";
+            git push origin "$NEW_TAG";
+          fi
