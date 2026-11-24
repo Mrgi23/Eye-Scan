@@ -82,6 +82,6 @@ The **GPU** subsystem provides hardware-accelerated rendering of the live camera
 The driver manages graphics resources, texture creation, image presentation, and display synchronization. By offloading visualization tasks to the **GPU**, the system can maintain a responsive real-time preview while leaving the **CPU** available for biometric processing, database operations, and application control logic. This separation of responsibilities improves overall throughput and ensures that visualization does not interfere with recognition performance.
 
 ## Next Steps
-For details on testing and validation methods used in this system, see [Testing & Validation](TESTING.md).
+For information on data repository infrastructure, see the [Database Infrastructure](DATABASE.md).
 
 For a detailed breakdown of the system’s architecture, see the [System Architecture](ARCHITECTURE.md).

@@ -109,4 +109,4 @@ Deployed via GitHub Pages, coverage reports are accessible at:
 ## Next Steps
 For general project information, see the [README](../README.md).
 
-For a more in-depth look into the hardware components, see the [Hardware Components](HARDWARE.md).
+For information on data repository infrastructure, see the [Database Infrastructure](DATABASE.md).
