@@ -4,7 +4,10 @@
  */
 #pragma once
 
+#include <bitset>
 #include <cstddef>
+
+constexpr size_t BITSET_SIZE = 2048;
 
 /**
  * @namespace types
@@ -12,6 +15,19 @@
  */
 namespace types
 {
+  /**
+   * @struct EyeCode
+   * @brief Encoded representation of the eye features.
+   *
+   * @param std::bitset<BITSET_SIZE> The encoded data.
+   * @param std::bitset<BITSET_SIZE> The mask indicating valid bits.
+   */
+  struct EyeCode
+  {
+    std::bitset<BITSET_SIZE> data;
+    std::bitset<BITSET_SIZE> mask = std::bitset<BITSET_SIZE>().set();
+  };
+
   /**
    * @struct Size
    * @brief Two‑dimensional extent.
