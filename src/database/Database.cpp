@@ -29,7 +29,7 @@ namespace db
     if (!fs::exists(path))
       return logger::Warning(std::format("Database: Database file does not exist: {}.", path.string()));
 
-    m_path = path;
+    m_path = fs::weakly_canonical(path);
     m_people.clear();
 
     for (const auto& dir : fs::directory_iterator(m_path))
@@ -56,6 +56,9 @@ namespace db
     if (m_path.empty())
       return logger::Warning("Database: Database not initialized. Call initialize first.");
 
+    if (info.image.empty())
+      return logger::Warning("Database: Image must be provided.");
+
     Person person;
     if (info.id.has_value())
     {
@@ -65,6 +68,9 @@ namespace db
           return logger::Warning("Database: First name and last name must be provided for new person.");
 
         person.id = *info.id;
+        person.firstName = *info.firstName;
+        person.lastName = *info.lastName;
+        person.count = 0;
       }
       else
       {
@@ -85,30 +91,35 @@ namespace db
     }
 
     person.modifiedAt = QDateTime::currentDateTime();
-    person.codes[person.count++] = info.code;
-    m_people[person.id] = std::move(person);
 
     const fs::path dir = m_path / person.id.toString().toStdString();
-    savePerson(dir, person, info.img);
+    const fs::path image = dir / "images" / std::format("{}.png", person.count);
+    person.images[person.count] = QString::fromStdString(image.string());
+    person.codes[person.count++] = info.code;
+
+    m_people[person.id] = std::move(person);
+    savePerson(dir, m_people.at(person.id), info.image);
     return logger::Info("Database: Person added successfully.");
   }
 
-  types::Status Database::find(const types::EyeCode& code, Person& person, double& distance)
+  types::Status Database::find(const types::EyeCode& code, types::PersonView& person)
   {
     if (m_path.empty())
       return logger::Warning("Database: Database not initialized. Call initialize first.");
 
-    double bestDistance = std::numeric_limits<double>::max();
     const Person* bestPerson = nullptr;
+    double bestDistance = std::numeric_limits<double>::max();
+    size_t bestIndex = 0;
     for (const auto& candidate : m_people)
     {
       for (size_t i = 0; i < candidate.second.count; ++i)
       {
-        distance = Database::distance(candidate.second.codes[i], code);
+        const double distance = Database::distance(candidate.second.codes[i], code);
         if (distance < bestDistance)
         {
           bestDistance = distance;
           bestPerson = &candidate.second;
+          bestIndex = i;
         }
       }
     }
@@ -116,8 +127,16 @@ namespace db
     if (!bestPerson || bestDistance > MATCH_THRESHOLD)
       return logger::Warning("Database: Person not found.");
 
-    person = *bestPerson;
-    distance = bestDistance;
+    person = types::PersonView{
+      .id = bestPerson->id.toString().toStdString(),
+      .firstName = bestPerson->firstName.toStdString(),
+      .lastName = bestPerson->lastName.toStdString(),
+      .modifiedAt = bestPerson->modifiedAt.toString(Qt::ISODate).toStdString(),
+      .count = bestPerson->count,
+      .index = bestIndex,
+      .image = bestPerson->images[bestIndex].toStdString(),
+      .match = 1.0 - bestDistance
+    };
     return logger::Info("Database: Person found successfully.");
   }
 
@@ -138,10 +157,11 @@ namespace db
   std::optional<Person> Database::loadPerson(const fs::path& dir)
   {
     const auto metadataPath = dir / "metadata.json";
+    const auto imagesDir = dir / "images";
     const auto codesDir = dir / "codes";
-    if (!fs::exists(metadataPath) || !fs::exists(codesDir))
+    if (!fs::exists(metadataPath) ||  !fs::exists(imagesDir) || !fs::exists(codesDir))
     {
-      logger::Warning(std::format("Database: Person metadata or codes not found: {}.", dir.string()));
+      logger::Warning(std::format("Database: Person metadata, images or codes not found: {}.", dir.string()));
       return std::nullopt;
     }
     std::ifstream stream(metadataPath);
@@ -168,6 +188,10 @@ namespace db
 
     for (size_t i = 0; i < person.count; ++i)
     {
+      const auto imagePath = imagesDir / std::format("{}.png", i);
+      if (fs::exists(imagePath))
+        person.images[i] = QString::fromStdString(imagePath.string());
+
       const auto codePath = codesDir / std::format("{}.bin", i);
       if (fs::exists(codePath))
       {
@@ -195,8 +219,7 @@ namespace db
 
     const auto imageDir = dir / "images";
     fs::create_directories(imageDir);
-    const auto imagePath = imageDir / std::format("{}.png", person.count - 1);
-    cv::imwrite(imagePath.string(), image);
+    cv::imwrite(person.images[person.count - 1].toStdString(), image);
 
     const auto codesDir = dir / "codes";
     fs::create_directories(codesDir);
