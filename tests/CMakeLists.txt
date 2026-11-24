@@ -34,15 +34,18 @@ target_link_libraries(
   GTest::gtest
   GTest::gtest_main
   GTest::gmock
+  nlohmann_json::nlohmann_json
   OpenCV-armv8::OpenCV-armv8
   OpenGL::EGL
   PkgConfig::GLES2
   PkgConfig::LIBCAMERA
   Qt6::Core
   Qt6::Gui
+  Qt6::Network
   Qt6::OpenGLWidgets
   Qt6::Test
   Qt6::Widgets
+  Qt6::Xml
 )
 
 # ===== Coverage =====

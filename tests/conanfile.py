@@ -7,6 +7,7 @@ class EyeScanTestsConan(ConanFile):
 
     requires = (
       "gtest/1.18.0",
+      "nlohmann_json/3.12.0",
     	"opencv-armv8/4.14.0@mrgi/release"
     )
 
