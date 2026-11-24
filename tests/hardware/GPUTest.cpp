@@ -7,7 +7,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-class MockGPUDriver : public drivers::IGPUDriver
+class MockGPUDriver : public hardware::drivers::IGPUDriver
 {
   public:
     MOCK_METHOD(void, open, (void*), (override));

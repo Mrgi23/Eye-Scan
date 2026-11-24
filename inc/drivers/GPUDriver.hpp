@@ -9,34 +9,34 @@
 #include <memory>
 
 /**
- * @namespace drivers
- * @brief Low-level hardware driver interfaces.
- */
-namespace drivers
-{
-  /**
-   * @class IGPUDriver
-   * @brief Virtual interface for GPU hardware drivers.
-   */
-  class IGPUDriver
-  {
-    public:
-      virtual ~IGPUDriver() = default;
-
-      virtual void open(void*) = 0;
-      virtual bool isOpen() const = 0;
-      virtual bool addTexture(void*, const std::shared_ptr<void>&) = 0;
-      virtual void draw() = 0;
-      virtual void close() = 0;
-  };
-} // namespace drivers
-
-/**
  * @namespace hardware
  * @brief Hardware interfaces for low‑level device operations (Camera, DMA, LED, GPU).
  */
 namespace hardware
 {
+  /**
+   * @namespace drivers
+   * @brief Low-level hardware driver interfaces.
+   */
+  namespace drivers
+  {
+    /**
+     * @class IGPUDriver
+     * @brief Virtual interface for GPU hardware drivers.
+     */
+    class IGPUDriver
+    {
+      public:
+        virtual ~IGPUDriver() = default;
+
+        virtual void open(void*) = 0;
+        virtual bool isOpen() const = 0;
+        virtual bool addTexture(void*, const std::shared_ptr<void>&) = 0;
+        virtual void draw() = 0;
+        virtual void close() = 0;
+    };
+  } // namespace drivers
+
   class IGPU
   {
     public:

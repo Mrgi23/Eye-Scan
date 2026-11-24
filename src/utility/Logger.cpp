@@ -31,7 +31,7 @@ namespace logger
 
     std::ostringstream timestamp;
     timestamp << std::put_time(&localTime, "%H:%M:%S");
-    const std::string fullMessage = "[" + timestamp.str() + "] [" + std::string(level) + "] " + std::string(message);
+    const std::string fullMessage = std::format("[{}] [{}] {}", timestamp.str(), level, message);
 
     s_logCallback(fullMessage);
   }

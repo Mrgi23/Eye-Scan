@@ -7,12 +7,12 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-class MockDMADriver : public drivers::IDMADriver
+class MockDMADriver : public hardware::drivers::IDMADriver
 {
   public:
-    MOCK_METHOD(bool, connect, (const types::VirtualMemory&), (override));
+    MOCK_METHOD(bool, connect, (const hardware::VirtualMemory&), (override));
     MOCK_METHOD(bool, cpu, (uint16_t*&), (const, override));
-    MOCK_METHOD(const types::VirtualMemory&, memory, (), (const, override));
+    MOCK_METHOD(const hardware::VirtualMemory&, memory, (), (const, override));
 };
 
 class DMATest : public hardware::DMA
@@ -35,14 +35,14 @@ TEST(DMA, Connect)
     DMATest dma;
     dma.setDriver(std::move(driver));
 
-    types::VirtualMemory vmem{.fd = -1};
+    hardware::VirtualMemory vmem{.fd = -1};
     EXPECT_EQ(dma.connect(vmem), types::Status::FAIL) << "DMA did not fail to connect";
   }
 
   {
     using ::testing::ReturnRef;
 
-    types::VirtualMemory vmem{
+    hardware::VirtualMemory vmem{
       .size = {.width = 1024, .height = 1024},
       .length = 1024,
       .stride = 2,
@@ -57,7 +57,7 @@ TEST(DMA, Connect)
     dma.setDriver(std::move(driver));
     ASSERT_EQ(dma.connect(vmem), types::Status::SUCCESS);
 
-    types::VirtualMemory dmaVmem = dma.memory();
+    hardware::VirtualMemory dmaVmem = dma.memory();
     EXPECT_EQ(dmaVmem.size.width, vmem.size.width) << "DMA memory width does not match";
     EXPECT_EQ(dmaVmem.size.height, vmem.size.height) << "DMA memory height does not match";
     EXPECT_EQ(dmaVmem.length, vmem.length) << "DMA memory length does not match";

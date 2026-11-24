@@ -7,13 +7,13 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-class MockCameraDriver : public drivers::ICameraDriver
+class MockCameraDriver : public hardware::drivers::ICameraDriver
 {
   public:
     MOCK_METHOD(void, open, (const std::string&), (override));
     MOCK_METHOD(bool, isOpen, (), (const, override));
     MOCK_METHOD(void, connect, (bool), (override));
-    MOCK_METHOD(void, configure, (const types::Size&, const types::CameraControls&), (override));
+    MOCK_METHOD(void, configure, (const types::Size&, const hardware::CameraControls&), (override));
     MOCK_METHOD(bool, isConfigured, (), (const, override));
     MOCK_METHOD(void, start, (), (override));
     MOCK_METHOD(bool, capture, (types::Frame&), (override));
@@ -66,7 +66,7 @@ TEST(Camera, Configure)
     CameraTest camera;
     camera.setDriver(std::move(driver));
     EXPECT_EQ(
-      camera.configure(types::Size{1920, 1080}, types::CameraControls{}),
+      camera.configure(types::Size{1920, 1080}, hardware::CameraControls{}),
       types::Status::FAIL
     ) << "Camera did not fail to configure";
   }
@@ -79,7 +79,7 @@ TEST(Camera, Configure)
     CameraTest camera;
     camera.setDriver(std::move(driver));
     EXPECT_EQ(
-      camera.configure(types::Size{1920, 1080}, types::CameraControls{}),
+      camera.configure(types::Size{1920, 1080}, hardware::CameraControls{}),
       types::Status::FAIL
     ) << "Camera did not fail to configure";
   }
@@ -94,7 +94,7 @@ TEST(Camera, Configure)
     CameraTest camera;
     camera.setDriver(std::move(driver));
     EXPECT_EQ(
-      camera.configure(types::Size{1920, 1080}, types::CameraControls{}),
+      camera.configure(types::Size{1920, 1080}, hardware::CameraControls{}),
       types::Status::FAIL
     ) << "Camera did not fail to configure";
   }
@@ -109,7 +109,7 @@ TEST(Camera, Configure)
     CameraTest camera;
     camera.setDriver(std::move(driver));
     EXPECT_EQ(
-      camera.configure(types::Size{1920, 1080}, types::CameraControls{}),
+      camera.configure(types::Size{1920, 1080}, hardware::CameraControls{}),
       types::Status::SUCCESS
     ) << "Camera did not configure successfully";
   }

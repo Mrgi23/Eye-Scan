@@ -7,6 +7,7 @@
 #include "drivers/DMADriver.hpp"
 #include "utility/Enums.hpp"
 #include "utility/Macros.hpp"
+#include "utility/Types.hpp"
 
 #include <memory>
 
@@ -16,6 +17,25 @@
  */
 namespace hardware
 {
+  /**
+   * @struct VirtualMemory
+   * @brief Representation of a virtual memory block.
+   *
+   * @param int32_t File descriptor associated with the memory block.
+   * @param types::Size The size of the memory block.
+   * @param size_t The length of the memory block.
+   * @param size_t The stride of the memory block.
+   * @param uint64_t The offset within the memory block.
+   */
+  struct VirtualMemory
+  {
+    types::Size size;
+    size_t length = 0;
+    size_t stride = 0;
+    uint64_t offset = 0;
+    int fd = -1;
+  };
+
 	/**
    * @class DMA
    * @brief High-level DMA interface for managing virtual memory and mapping it to CPU memory space.
@@ -43,7 +63,7 @@ namespace hardware
        * @return Status::SUCCESS on success,
        *         Status::FAIL if the descriptor is invalid or duplication fails.
        */
-			types::Status connect(const types::VirtualMemory&);
+			types::Status connect(const VirtualMemory&);
 
       /**
        * @brief Get the mapped virtual memory to the CPU address space.
@@ -59,7 +79,7 @@ namespace hardware
        *
        * @return Reference to the virtual memory object.
        */
-      const types::VirtualMemory& memory() const noexcept;
+      const VirtualMemory& memory() const noexcept;
 
     protected:
       /**

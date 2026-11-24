@@ -4,25 +4,34 @@
  */
 #pragma once
 
-#include "utility/Types.hpp"
+#include <cstdint>
 
 /**
- * @namespace drivers
- * @brief Low-level hardware driver interfaces.
+ * @namespace hardware
+ * @brief Hardware interfaces for low‑level device operations (Camera, DMA, LED, GPU).
  */
-namespace drivers
+namespace hardware
 {
-  /**
-   * @class IDMADriver
-   * @brief Virtual interface for DMA hardware drivers.
-   */
-  class IDMADriver
-  {
-    public:
-      virtual ~IDMADriver() = default;
+  struct VirtualMemory; // Forward declaration of VirtualMemory structure.
 
-      virtual bool connect(const types::VirtualMemory&) = 0;
-      virtual bool cpu(uint16_t*&) const = 0;
-      virtual const types::VirtualMemory& memory() const = 0;
-  };
-} // namespace drivers
+  /**
+   * @namespace drivers
+   * @brief Low-level hardware driver interfaces.
+   */
+  namespace drivers
+  {
+    /**
+     * @class IDMADriver
+     * @brief Virtual interface for DMA hardware drivers.
+     */
+    class IDMADriver
+    {
+      public:
+        virtual ~IDMADriver() = default;
+
+        virtual bool connect(const VirtualMemory&) = 0;
+        virtual bool cpu(uint16_t*&) const = 0;
+        virtual const VirtualMemory& memory() const = 0;
+    };
+  } // namespace drivers
+} // namespace hardware
