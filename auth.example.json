@@ -1,0 +1,4 @@
+{
+  "url": "https://mrgi23storage.blob.core.windows.net/database",
+  "sas": "<your_sas_token_here>"
+}
