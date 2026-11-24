@@ -30,9 +30,9 @@ TEST(Frame, Create)
     types::Frame frame(buffer, size, stride, std::make_shared<int>(1));
     cv::Mat matFrame = frame.mat();
 
-    EXPECT_FALSE(matFrame.empty()) << "Mat frame should not be empty";
-    EXPECT_EQ(matFrame.rows, static_cast<int>(frame.size().height)) << "Mat frame has incorrect number of rows";
-    EXPECT_EQ(matFrame.cols, static_cast<int>(frame.size().width)) << "Mat frame has incorrect number of columns";
+    ASSERT_FALSE(matFrame.empty()) << "Mat frame should not be empty";
+    ASSERT_EQ(matFrame.rows, static_cast<int>(frame.size().height)) << "Mat frame has incorrect number of rows";
+    ASSERT_EQ(matFrame.cols, static_cast<int>(frame.size().width)) << "Mat frame has incorrect number of columns";
     EXPECT_EQ(matFrame.step, stride) << "Mat frame has incorrect step size";
     EXPECT_NE(frame.owner(), nullptr) << "Frame owner pointer is incorrect";
 

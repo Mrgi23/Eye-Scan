@@ -17,6 +17,9 @@ include("${CMAKE_CONFIG_DIR}/Utils.cmake")
 # ----- Google Test & Google Mock -----
 find_package(GTest REQUIRED)
 
+# ----- Qt6 Test -----
+find_package(Qt6 REQUIRED COMPONENTS Test)
+
 # ===== Add Additional Sources =====
 set(TESTS_DIR "${ROOT_DIR}/tests")
 file(GLOB TEST_SOURCES CONFIGURE_DEPENDS "${TESTS_DIR}/**/*.cpp" "${TESTS_DIR}/main.cpp")
@@ -35,6 +38,11 @@ target_link_libraries(
   OpenGL::EGL
   PkgConfig::GLES2
   PkgConfig::LIBCAMERA
+  Qt6::Core
+  Qt6::Gui
+  Qt6::OpenGLWidgets
+  Qt6::Test
+  Qt6::Widgets
 )
 
 # ===== Coverage =====

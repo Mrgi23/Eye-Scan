@@ -16,11 +16,11 @@ static types::Frame dummy()
 TEST(Queue, Push)
 {
   types::Queue<types::Frame, 4> queue;
-  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS) <<  "Push failed unexpectedly";
-  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS) <<  "Push failed unexpectedly";
-  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS) <<  "Push failed unexpectedly";
-  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS) <<  "Push failed unexpectedly";
-  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::FAIL) <<  "Push should have failed due to full queue";
+  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS) << "Push failed unexpectedly";
+  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS) << "Push failed unexpectedly";
+  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS) << "Push failed unexpectedly";
+  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS) << "Push failed unexpectedly";
+  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::FAIL) << "Push should have failed due to full queue";
 }
 
 TEST(Queue, Pop)
@@ -32,19 +32,19 @@ TEST(Queue, Pop)
   queue.push(std::move(dummy()));
 
   types::Frame value;
-  EXPECT_EQ(queue.pop(value), types::Status::SUCCESS) <<  "Pop failed unexpectedly";
-  EXPECT_NE(value.owner(), nullptr) <<  "Pop returned incorrect value";
+  ASSERT_EQ(queue.pop(value), types::Status::SUCCESS) << "Pop failed unexpectedly";
+  EXPECT_NE(value.owner(), nullptr) << "Pop returned incorrect value";
 
-  EXPECT_EQ(queue.pop(value), types::Status::SUCCESS) <<  "Pop failed unexpectedly";
-  EXPECT_NE(value.owner(), nullptr) <<  "Pop returned incorrect value";
+  ASSERT_EQ(queue.pop(value), types::Status::SUCCESS) << "Pop failed unexpectedly";
+  EXPECT_NE(value.owner(), nullptr) << "Pop returned incorrect value";
 
-  EXPECT_EQ(queue.pop(value), types::Status::SUCCESS) <<  "Pop failed unexpectedly";
-  EXPECT_NE(value.owner(), nullptr) <<  "Pop returned incorrect value";
+  ASSERT_EQ(queue.pop(value), types::Status::SUCCESS) << "Pop failed unexpectedly";
+  EXPECT_NE(value.owner(), nullptr) << "Pop returned incorrect value";
 
-  EXPECT_EQ(queue.pop(value), types::Status::SUCCESS) <<  "Pop failed unexpectedly";
-  EXPECT_NE(value.owner(), nullptr) <<  "Pop returned incorrect value";
+  ASSERT_EQ(queue.pop(value), types::Status::SUCCESS) << "Pop failed unexpectedly";
+  EXPECT_NE(value.owner(), nullptr) << "Pop returned incorrect value";
 
-  EXPECT_EQ(queue.pop(value), types::Status::FAIL) <<  "Pop should have failed due to empty queue";
+  EXPECT_EQ(queue.pop(value), types::Status::FAIL) << "Pop should have failed due to empty queue";
 }
 
 TEST(Queue, Clear)
@@ -57,5 +57,5 @@ TEST(Queue, Clear)
   queue.clear();
 
   types::Frame value;
-  EXPECT_EQ(queue.pop(value), types::Status::FAIL) <<  "Pop should have failed due to empty queue after clear";
+  EXPECT_EQ(queue.pop(value), types::Status::FAIL) << "Pop should have failed due to empty queue after clear";
 }

@@ -55,7 +55,7 @@ TEST(DMA, Connect)
 
     DMATest dma;
     dma.setDriver(std::move(driver));
-    EXPECT_EQ(dma.connect(vmem), types::Status::SUCCESS);
+    ASSERT_EQ(dma.connect(vmem), types::Status::SUCCESS);
 
     types::VirtualMemory dmaVmem = dma.memory();
     EXPECT_EQ(dmaVmem.size.width, vmem.size.width) << "DMA memory width does not match";

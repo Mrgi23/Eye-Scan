@@ -31,7 +31,10 @@ Ensure that all required dependencies are installed.
 
 ### Installation
 ```sh
-sudo apt update && sudo apt install -y build-essential cmake curl gcc g++ git gpg lcov libavif-dev libcamera-dev libdrm-dev libegl1-mesa-dev libgles2-mesa-dev libjpeg-dev libopenblas-dev libopenjp2-7-dev libopenexr-dev libpng-dev libwebp-dev ninja-build pipx pkg-config
+sudo apt update && sudo apt install -y build-essential cmake curl gcc g++ git gpg \
+lcov libavif-dev libcamera-dev libdrm-dev libegl1-mesa-dev libgles2-mesa-dev \
+libjpeg-dev libopenblas-dev libopenjp2-7-dev libopenexr-dev libpng-dev libwebp-dev \
+ninja-build pipx pkg-config qt6-base-dev qt6-tools-dev qt6-wayland
 
 sudo pipx ensurepath && sudo pipx install conan
 conan remote add conancenter https://center2.conan.io
