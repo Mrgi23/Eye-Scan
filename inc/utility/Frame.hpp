@@ -65,7 +65,7 @@ namespace types
        *
        * @return OpenCV Mat object.
        */
-      cv::Mat mat() const noexcept;
+      cv::Mat mat() const;
 
       /**
        * @brief Get the frame size.
