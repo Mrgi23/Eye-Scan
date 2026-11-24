@@ -7,12 +7,32 @@
 #include "drivers/CameraDriver.hpp"
 #include "utility/Macros.hpp"
 
+#include <cstdint>
+#include <optional>
+
 /**
  * @namespace hardware
  * @brief Hardware interfaces for low‑level device operations (Camera, DMA, LED, GPU).
  */
 namespace hardware
 {
+  /**
+   * @struct CameraControls
+   * @brief Camera control parameters.
+   *
+   * @param uint32_t Desired frames per second for the camera stream. Must be > 0.
+   * @param std::optional<bool> Optional flag to enable/disable auto-exposure. If not set, defaults to enabled.
+   * @param std::optional<int32_t> Optional manual exposure time in microseconds. If auto-exposure is enabled, this value is ignored.
+   * @param std::optional<float> Optional manual analogue gain. If auto-exposure is enabled, this value is ignored.
+   */
+  struct CameraControls
+  {
+    uint32_t fps = 30;
+    std::optional<bool> autoExposure;
+    std::optional<int32_t> exposureTime;
+    std::optional<float> analogueGain;
+  };
+
   /**
    * @class Camera
    * @brief High-Level camera interface for streaming and capturing frames.
@@ -58,7 +78,7 @@ namespace hardware
        * @return Status::SUCCESS on success,
        *         Status::FAIL if configuration fails.
        */
-      types::Status configure(const types::Size&, const types::CameraControls&) override;
+      types::Status configure(const types::Size&, const CameraControls&) override;
 
       /**
        * @brief Start camera streaming.

@@ -22,11 +22,14 @@ pkg_check_modules(GLES2 REQUIRED IMPORTED_TARGET glesv2)
 # ----- libcamera -----
 pkg_check_modules(LIBCAMERA REQUIRED IMPORTED_TARGET libcamera)
 
+# -----nlohmann_json -----
+find_package(nlohmann_json REQUIRED)
+
 # ----- OpenCV (armv8) -----
 find_package(OpenCV-armv8)
 
 # ----- Qt6 -----
-find_package(Qt6 REQUIRED COMPONENTS Core Gui OpenGLWidgets Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Network OpenGLWidgets Widgets Xml)
 
 # ===== Sources =====
 file(

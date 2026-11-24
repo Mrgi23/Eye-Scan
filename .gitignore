@@ -49,3 +49,7 @@ coverage/
 
 # VS Code settings
 .vscode/
+
+# Database related files
+/database/
+auth.json

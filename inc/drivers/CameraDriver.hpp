@@ -10,39 +10,41 @@
 #include <string>
 
 /**
- * @namespace drivers
- * @brief Low-level hardware driver interfaces.
- */
-namespace drivers
-{
-  /**
-   * @class ICameraDriver
-   * @brief Virtual interface for camera hardware drivers.
-   */
-  class ICameraDriver
-  {
-    public:
-      virtual ~ICameraDriver() = default;
-
-      virtual void open(const std::string& device) = 0;
-      virtual bool isOpen() const = 0;
-      virtual void connect(bool) = 0;
-      virtual void configure(const types::Size&, const types::CameraControls&) = 0;
-      virtual bool isConfigured() const = 0;
-      virtual void start() = 0;
-      virtual bool capture(types::Frame& frame) = 0;
-      virtual void stop() = 0;
-      virtual bool isActive() const = 0;
-      virtual void close() = 0;
-  };
-} // namespace drivers
-
-/**
  * @namespace hardware
  * @brief Hardware interfaces for low‑level device operations (Camera, DMA, LED, GPU).
  */
 namespace hardware
 {
+  struct CameraControls; // Forward declaration of CameraControls structure
+
+  /**
+   * @namespace drivers
+   * @brief Low-level hardware driver interfaces.
+   */
+  namespace drivers
+  {
+    /**
+     * @class ICameraDriver
+     * @brief Virtual interface for camera hardware drivers.
+     */
+    class ICameraDriver
+    {
+      public:
+        virtual ~ICameraDriver() = default;
+
+        virtual void open(const std::string& device) = 0;
+        virtual bool isOpen() const = 0;
+        virtual void connect(bool) = 0;
+        virtual void configure(const types::Size&, const CameraControls&) = 0;
+        virtual bool isConfigured() const = 0;
+        virtual void start() = 0;
+        virtual bool capture(types::Frame& frame) = 0;
+        virtual void stop() = 0;
+        virtual bool isActive() const = 0;
+        virtual void close() = 0;
+    };
+  } // namespace drivers
+
   /**
    * @class ICamera
    * @brief Virtual interface for camera operations.
@@ -74,11 +76,11 @@ namespace hardware
        * exposure, gain, and white balance.
        *
        * @param types::Size Desired stream size.
-       * @param types::CameraControls Control configuration parameters.
+       * @param hardware::CameraControls Control configuration parameters.
        * @return Status::SUCCESS on success,
        *         Status::FAIL if configuration fails.
        */
-      virtual types::Status configure(const types::Size&, const types::CameraControls&) = 0;
+      virtual types::Status configure(const types::Size&, const CameraControls&) = 0;
 
       /**
        * @brief Start camera streaming.

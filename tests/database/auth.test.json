@@ -1,0 +1,4 @@
+{
+  "url": "https://mrgi23storage.blob.core.windows.net/testing",
+  "sas": "sp=racwdl&st=2026-11-17T02:32:00Z&se=2027-11-17T10:47:00Z&spr=https&sv=2026-02-06&sr=c&sig=%2BzCwzOqWGODI2xDBYEof%2BRtpNXfY7rKgcmSEJWa29yo%3D"
+}
