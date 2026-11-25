@@ -104,12 +104,14 @@ The testing framework is integrated with **GitHub Actions**, ensuring automated 
 
 ### CI/CD Pipeline Overview
 The pipeline is structured into the following stages:
-| **Stage**    | **Purpose** |
-|--------------|-------------|
-| **Setup**    | Builds all dependencies pre-installed (`cmake`, `g++`, `gcc`, `googletest`, `googlemock`, `lcov`, etc.) |
-| **Build**    | Compiles C++ tests |
-| **Test**     | Runs C++ (Google Test) tests, and generates coverage reports using `gcov` |
-| **Deploy**   | Creates new tag based on the release version and publishes reports via **GitHub Pages** (only `main`) |
+| **Stage**               | **Purpose**                                                |
+|-------------------------|------------------------------------------------------------|
+| **Setup**               | Install all dependencies                                   |
+| **Format**              | Checks and enforces code formatting                        |
+| **Build**               | Compiles C++ tests                                         |
+| **Test**                | Runs tests, and generates coverage reports using           |
+| **Deploy (coverage)**   | Ppublishes reports via **GitHub Pages** (only `main`)      |
+| **Deploy (tag)**        | Creates new tag based on the release version (only `main`) |
 
 ### When Does CI/CD Run?
 The CI/CD pipeline is triggered in the following cases:

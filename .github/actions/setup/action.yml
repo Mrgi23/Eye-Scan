@@ -8,7 +8,7 @@ runs:
     - shell: bash
       run: |
         set -euo pipefail
-        apt-get update
+        
         apt-get install -y build-essential cmake curl gcc g++ git gpg lcov \
           libavif-dev libcamera-dev libdrm-dev libegl1-mesa-dev libgles2-mesa-dev \
           libjpeg-dev libopenblas-dev libopenjp2-7-dev libopenexr-dev \

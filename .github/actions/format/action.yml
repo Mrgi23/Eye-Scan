@@ -1,0 +1,27 @@
+name: Check Formatting
+description: Check C++ code formatting if it is applied correctly
+
+runs:
+  using: "composite"
+
+  steps:
+    - shell: bash
+      run: |
+        set -euo
+
+        apt-get update
+        apt-get install -y clang-format
+
+        FILES=$(find ./inc ./src \( -name "*.hpp" -o -name "*.cpp" \))
+
+        FAILED=0
+        for FILE in $FILES; do
+          if ! diff -u "$FILE" <(clang-format "$FILE") > /dev/null; then
+            echo "Not formatted: $FILE"
+            FAILED=1
+          fi
+        done
+
+        if [ "$FAILED" -ne 0 ]; then
+          exit "$FAILED"
+        fi

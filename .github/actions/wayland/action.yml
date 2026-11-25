@@ -8,6 +8,7 @@ runs:
     - shell: bash
       run: |
         set -euo pipefail
+
         apt-get install -y weston qt6-wayland
 
         export XDG_RUNTIME_DIR=/tmp/xdg-runtime
