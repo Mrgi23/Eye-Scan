@@ -19,6 +19,10 @@
    */
   namespace db
   {
+    /**
+     * @class Storage
+     * @brief Represents the cloud storage for managing authentication and data.
+     */
     class Storage
     {
       public:

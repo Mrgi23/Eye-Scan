@@ -66,6 +66,10 @@ namespace db
     size_t count;
   };
 
+  /**
+   * @class Database
+   * @brief Represents the database for storing and managing people.
+   */
   class Database
   {
     public:
