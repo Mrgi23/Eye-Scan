@@ -12,7 +12,8 @@
 namespace ui
 {
   Display::Display(QWindow* parent)
-    : QOpenGLWindow(NoPartialUpdate, parent), m_gpu(std::make_unique<hardware::GPU>())
+    : QOpenGLWindow(NoPartialUpdate, parent),
+      m_gpu(std::make_unique<hardware::GPU>())
   {
     const QSize screen = QGuiApplication::primaryScreen()->size();
     fitDisplay(screen);
@@ -30,8 +31,7 @@ namespace ui
   void Display::onNewFrame(std::shared_ptr<types::Frame> data)
   {
     const QSize size{
-      static_cast<int>(data->size().width),
-      static_cast<int>(data->size().height)
+      static_cast<int>(data->size().width), static_cast<int>(data->size().height)
     };
 
     {
@@ -53,7 +53,8 @@ namespace ui
   {
     initializeOpenGLFunctions();
 
-    if (m_gpu && m_gpu->open(static_cast<void*>(eglGetCurrentDisplay())) != types::Status::SUCCESS)
+    void* display = static_cast<void*>(eglGetCurrentDisplay());
+    if (m_gpu && m_gpu->open(display) != types::Status::SUCCESS)
     {
       m_gpu.reset();
       close();
@@ -71,7 +72,8 @@ namespace ui
     if (!m_gpu || !data || !data->owner())
       return;
 
-    m_gpu->render(static_cast<void*>(eglGetCurrentSurface(EGL_DRAW)), data->owner());
+    void* surface = static_cast<void*>(eglGetCurrentSurface(EGL_DRAW));
+    m_gpu->render(surface, data->owner());
   }
 
   void Display::resizeGL(int w, int h)
@@ -88,13 +90,13 @@ namespace ui
     int width, height;
     if (imgAspect > screenAspect)
     {
-      width  = screen.width();
+      width = screen.width();
       height = static_cast<int>(width / imgAspect);
     }
     else
     {
       height = screen.height();
-      width  = static_cast<int>(height * imgAspect);
+      width = static_cast<int>(height * imgAspect);
     }
 
     resize(width, height);

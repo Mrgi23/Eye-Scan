@@ -20,36 +20,36 @@ namespace ui
 
     m_view = new QTextEdit(this);
     m_view->setReadOnly(true);
-    m_view->setStyleSheet(
-      "QTextEdit { "
-      "  background-color: black; "
-      "}"
-    );
+    m_view->setStyleSheet("QTextEdit { "
+                          "  background-color: black; "
+                          "}");
 
     auto* layout = new QVBoxLayout(this);
     layout->addWidget(m_view);
     setLayout(layout);
 
-    logger::SetLogCallback([this](const std::string& message)
-    {
-      QString qMessage = QString::fromUtf8(message.data(), message.size());
+    logger::SetLogCallback(
+      [this](const std::string& message)
+      {
+        QString qMessage = QString::fromUtf8(message.data(), message.size());
 
-      QMetaObject::invokeMethod(
-        this,
-        [this, qMessage]()
-        {
-          QColor color = QColor("#7EE787");
-          if (qMessage.contains("[WARNING]"))
-            color = Qt::yellow;
-          else if (qMessage.contains("[ERROR]"))
-            color = Qt::red;
+        QMetaObject::invokeMethod(
+          this,
+          [this, qMessage]()
+          {
+            QColor color = QColor("#7EE787");
+            if (qMessage.contains("[WARNING]"))
+              color = Qt::yellow;
+            else if (qMessage.contains("[ERROR]"))
+              color = Qt::red;
 
-          m_view->setTextColor(color);
-          m_view->append(qMessage);
-        },
-        Qt::QueuedConnection
-      );
-    });
+            m_view->setTextColor(color);
+            m_view->append(qMessage);
+          },
+          Qt::QueuedConnection
+        );
+      }
+    );
   }
 
   Debugger::~Debugger()
