@@ -29,6 +29,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check Formatting
+        uses: ./.github/actions/format
+
       - name: Setup C++ Toolchain
         uses: ./.github/actions/setup
 
