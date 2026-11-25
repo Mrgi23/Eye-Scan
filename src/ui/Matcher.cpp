@@ -4,13 +4,13 @@
  */
 #include "ui/Matcher.hpp"
 
-#include <opencv2/imgproc.hpp>
 #include <QFont>
-#include <QImage>
 #include <QFormLayout>
+#include <QImage>
 #include <QMutexLocker>
 #include <QPixmap>
 #include <QVBoxLayout>
+#include <opencv2/imgproc.hpp>
 
 namespace ui
 {
@@ -120,8 +120,12 @@ namespace ui
     m_lastNameLabel.setText(QString::fromStdString(person.lastName));
     m_modifiedAtLabel.setText(QString::fromStdString(person.modifiedAt));
     m_countLabel.setText(QString::number(person.count));
-    m_codeFileLabel.setText(QString::fromStdString(std::format("{}.bin", person.index)));
-    m_imageFileLabel.setText(QString::fromStdString(std::format("{}.png", person.index)));
+    m_codeFileLabel.setText(
+      QString::fromStdString(std::format("{}.bin", person.index))
+    );
+    m_imageFileLabel.setText(
+      QString::fromStdString(std::format("{}.png", person.index))
+    );
   }
 
   bool Matcher::updateImage(const QString& path)
@@ -136,13 +140,9 @@ namespace ui
     }
 
     const QPixmap pixmap = QPixmap::fromImage(image);
-    m_imageLabel.setPixmap(
-      pixmap.scaled(
-        m_imageLabel.size(),
-        Qt::KeepAspectRatio,
-        Qt::SmoothTransformation
-      )
-    );
+    m_imageLabel.setPixmap(pixmap.scaled(
+      m_imageLabel.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation
+    ));
     return true;
   }
 } // namespace ui

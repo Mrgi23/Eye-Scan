@@ -26,12 +26,13 @@ namespace logger
 
     const auto now = std::chrono::system_clock::now();
     const auto time = std::chrono::system_clock::to_time_t(now);
-    std::tm localTime {};
+    std::tm localTime{};
     localtime_r(&time, &localTime);
 
     std::ostringstream timestamp;
     timestamp << std::put_time(&localTime, "%H:%M:%S");
-    const std::string fullMessage = std::format("[{}] [{}] {}", timestamp.str(), level, message);
+    const std::string fullMessage =
+      std::format("[{}] [{}] {}", timestamp.str(), level, message);
 
     s_logCallback(fullMessage);
   }
@@ -60,12 +61,12 @@ namespace logger
 
     switch (error)
     {
-      case types::Error::INVALID_ARGUMENT:
-        throw std::invalid_argument(std::string(message));
-      case types::Error::OUT_OF_RANGE:
-        throw std::out_of_range(std::string(message));
-      case types::Error::RUNTIME_ERROR:
-        throw std::runtime_error(std::string(message));
+    case types::Error::INVALID_ARGUMENT:
+      throw std::invalid_argument(std::string(message));
+    case types::Error::OUT_OF_RANGE:
+      throw std::out_of_range(std::string(message));
+    case types::Error::RUNTIME_ERROR:
+      throw std::runtime_error(std::string(message));
     }
     std::terminate(); // LCOV_EXCL_LINE
   }

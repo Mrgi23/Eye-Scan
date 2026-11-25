@@ -18,10 +18,8 @@
 namespace
 {
   const GLfloat vertices[] = {
-    -1.0f, -1.0f, 0.0f, 1.0f,
-    1.0f, -1.0f, 1.0f, 1.0f,
-    -1.0f,  1.0f, 0.0f, 0.0f,
-    1.0f,  1.0f, 1.0f, 0.0f,
+    -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+    -1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f,
   };
 
   const char* fragmentShaderSrc =
@@ -82,14 +80,13 @@ namespace
     "  float gray = dot(clamp(rgb, 0.0, 1.0), vec3(0.2126, 0.7152, 0.0722));\n"
     "  gl_FragColor = vec4(vec3(gray), 1.0);\n"
     "}\n";
-  const char* vertexShaderSrc =
-    "attribute vec2 aPos;\n"
-    "attribute vec2 aTexCoord;\n"
-    "varying vec2 vTexCoord;\n"
-    "void main() {\n"
-    "  vTexCoord = aTexCoord;\n"
-    "  gl_Position = vec4(aPos, 0.0, 1.0);\n"
-    "}\n";
+  const char* vertexShaderSrc = "attribute vec2 aPos;\n"
+                                "attribute vec2 aTexCoord;\n"
+                                "varying vec2 vTexCoord;\n"
+                                "void main() {\n"
+                                "  vTexCoord = aTexCoord;\n"
+                                "  gl_Position = vec4(aPos, 0.0, 1.0);\n"
+                                "}\n";
 
   struct GlExtensions
   {
@@ -97,8 +94,8 @@ namespace
     PFNEGLDESTROYIMAGEKHRPROC eglDestroyImageKHR = nullptr;
     PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glEGLImageTarget = nullptr;
 
-    PFNGLGENVERTEXARRAYSOESPROC    glGenVertexArraysOES    = nullptr;
-    PFNGLBINDVERTEXARRAYOESPROC    glBindVertexArrayOES    = nullptr;
+    PFNGLGENVERTEXARRAYSOESPROC glGenVertexArraysOES = nullptr;
+    PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayOES = nullptr;
     PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysOES = nullptr;
 
     bool initialize()
@@ -109,7 +106,7 @@ namespace
       eglDestroyImageKHR = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(
         eglGetProcAddress("eglDestroyImageKHR")
       );
-      glEGLImageTarget =reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(
+      glEGLImageTarget = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(
         eglGetProcAddress("glEGLImageTargetTexture2DOES")
       );
 
@@ -124,7 +121,7 @@ namespace
       );
 
       return eglCreateImageKHR && eglDestroyImageKHR && glEGLImageTarget &&
-             glGenVertexArraysOES && glBindVertexArrayOES && glDeleteVertexArraysOES;
+        glGenVertexArraysOES && glBindVertexArrayOES && glDeleteVertexArraysOES;
     }
   };
 } // namespace
@@ -135,37 +132,38 @@ namespace hardware
   {
     class GPUDriver : public IGPUDriver
     {
-      public:
-        GPUDriver() noexcept = default;
-        ~GPUDriver() override;
+    public:
+      GPUDriver() noexcept = default;
+      ~GPUDriver() override;
 
-        DISABLE_COPY_AND_MOVE(GPUDriver)
+      DISABLE_COPY_AND_MOVE(GPUDriver)
 
-        virtual void open(void* display) override;
-        virtual bool isOpen() const noexcept override;
-        virtual bool addTexture(void* surface, const std::shared_ptr<void>& data) override;
-        virtual void draw() override;
-        virtual void close() override;
+      virtual void open(void* display) override;
+      virtual bool isOpen() const noexcept override;
+      virtual bool addTexture(void* surface, const std::shared_ptr<void>& data)
+        override;
+      virtual void draw() override;
+      virtual void close() override;
 
-      private:
-        void clearTexture();
+    private:
+      void clearTexture();
 
-      private:
-        GlExtensions ext{};
+    private:
+      GlExtensions ext{};
 
-        EGLDisplay m_display = EGL_NO_DISPLAY;
-        EGLContext m_context = EGL_NO_CONTEXT;
-        EGLImageKHR m_image = EGL_NO_IMAGE_KHR;
-        GLuint m_texture = 0;
+      EGLDisplay m_display = EGL_NO_DISPLAY;
+      EGLContext m_context = EGL_NO_CONTEXT;
+      EGLImageKHR m_image = EGL_NO_IMAGE_KHR;
+      GLuint m_texture = 0;
 
-        GLuint m_program = 0;
-        GLuint m_vertexArray = 0;
-        GLuint m_vertexBuffer = 0;
+      GLuint m_program = 0;
+      GLuint m_vertexArray = 0;
+      GLuint m_vertexBuffer = 0;
 
-        GLsizei m_width = 0;
-        GLsizei m_height = 0;
+      GLsizei m_width = 0;
+      GLsizei m_height = 0;
 
-        bool m_isOpen = false;
+      bool m_isOpen = false;
     };
 
     GPUDriver::~GPUDriver()
@@ -183,7 +181,7 @@ namespace hardware
       }
       eglBindAPI(EGL_OPENGL_ES_API);
 
-      static const EGLint attrs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
+      static const EGLint attrs[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
       m_context = eglCreateContext(display, nullptr, EGL_NO_CONTEXT, attrs);
       if (m_context == EGL_NO_CONTEXT)
       {
@@ -219,7 +217,7 @@ namespace hardware
       };
 
       GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSrc);
-      GLuint vertexShader = compileShader(GL_VERTEX_SHADER,   vertexShaderSrc);
+      GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSrc);
       if (!fragmentShader || !vertexShader)
       {
         if (fragmentShader)
@@ -263,13 +261,15 @@ namespace hardware
         GLint posLoc = glGetAttribLocation(m_program, "aPos");
         glEnableVertexAttribArray(posLoc);
         glVertexAttribPointer(
-          posLoc, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), reinterpret_cast<void*>(0)
+          posLoc, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+          reinterpret_cast<void*>(0)
         );
 
         GLint texLoc = glGetAttribLocation(m_program, "aTexCoord");
         glEnableVertexAttribArray(texLoc);
         glVertexAttribPointer(
-          texLoc, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), reinterpret_cast<void*>(2 * sizeof(GLfloat))
+          texLoc, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+          reinterpret_cast<void*>(2 * sizeof(GLfloat))
         );
 
         ext.glBindVertexArrayOES(0);
@@ -307,12 +307,18 @@ namespace hardware
 
       const VirtualMemory& virtualMemory = dma->memory();
       const EGLint attrs[] = {
-        EGL_WIDTH,  static_cast<EGLint>(virtualMemory.size.width),
-        EGL_HEIGHT, static_cast<EGLint>(virtualMemory.size.height),
-        EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLint>(DRM_FORMAT_R16),
-        EGL_DMA_BUF_PLANE0_FD_EXT,     virtualMemory.fd,
-        EGL_DMA_BUF_PLANE0_OFFSET_EXT, static_cast<EGLint>(virtualMemory.offset),
-        EGL_DMA_BUF_PLANE0_PITCH_EXT,  static_cast<EGLint>(virtualMemory.stride),
+        EGL_WIDTH,
+        static_cast<EGLint>(virtualMemory.size.width),
+        EGL_HEIGHT,
+        static_cast<EGLint>(virtualMemory.size.height),
+        EGL_LINUX_DRM_FOURCC_EXT,
+        static_cast<EGLint>(DRM_FORMAT_R16),
+        EGL_DMA_BUF_PLANE0_FD_EXT,
+        virtualMemory.fd,
+        EGL_DMA_BUF_PLANE0_OFFSET_EXT,
+        static_cast<EGLint>(virtualMemory.offset),
+        EGL_DMA_BUF_PLANE0_PITCH_EXT,
+        static_cast<EGLint>(virtualMemory.stride),
         EGL_NONE
       };
 
@@ -347,7 +353,7 @@ namespace hardware
 
       glBindTexture(GL_TEXTURE_2D, 0);
 
-      m_width  = static_cast<GLsizei>(virtualMemory.size.width);
+      m_width = static_cast<GLsizei>(virtualMemory.size.width);
       m_height = static_cast<GLsizei>(virtualMemory.size.height);
       return true;
     }
@@ -366,13 +372,11 @@ namespace hardware
       glUniform1i(glGetUniformLocation(m_program, "uTexRaw"), 0);
       glUniform2f(
         glGetUniformLocation(m_program, "uTextureSize"),
-        static_cast<GLfloat>(m_width),
-        static_cast<GLfloat>(m_height)
+        static_cast<GLfloat>(m_width), static_cast<GLfloat>(m_height)
       );
       glUniform2f(
         glGetUniformLocation(m_program, "uTexelSize"),
-        1.0f / static_cast<GLfloat>(m_width),
-        1.0f / static_cast<GLfloat>(m_height)
+        1.0f / static_cast<GLfloat>(m_width), 1.0f / static_cast<GLfloat>(m_height)
       );
 
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -426,6 +430,7 @@ namespace hardware
       m_isOpen = false;
     }
   } // namespace drivers
+
   // LCOV_EXCL_STOP
 
   GPU::GPU() noexcept : m_driver(std::make_unique<drivers::GPUDriver>())
