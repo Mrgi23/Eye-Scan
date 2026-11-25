@@ -9,21 +9,21 @@
 
 class MockGPUDriver : public hardware::drivers::IGPUDriver
 {
-  public:
-    MOCK_METHOD(void, open, (void*), (override));
-    MOCK_METHOD(bool, isOpen, (), (const, override));
-    MOCK_METHOD(bool, addTexture, (void*, const std::shared_ptr<void>&), (override));
-    MOCK_METHOD(void, draw, (), (override));
-    MOCK_METHOD(void, close, (), (override));
+public:
+  MOCK_METHOD(void, open, (void*), (override));
+  MOCK_METHOD(bool, isOpen, (), (const, override));
+  MOCK_METHOD(bool, addTexture, (void*, const std::shared_ptr<void>&), (override));
+  MOCK_METHOD(void, draw, (), (override));
+  MOCK_METHOD(void, close, (), (override));
 };
 
 class GPUTest : public hardware::GPU
 {
-  public:
-    void setDriver(std::unique_ptr<MockGPUDriver> driver)
-    {
-      hardware::GPU::setDriver(std::move(driver));
-    }
+public:
+  void setDriver(std::unique_ptr<MockGPUDriver> driver)
+  {
+    hardware::GPU::setDriver(std::move(driver));
+  }
 };
 
 TEST(GPU, Open)
@@ -36,7 +36,8 @@ TEST(GPU, Open)
 
     GPUTest gpu;
     gpu.setDriver(std::move(driver));
-    EXPECT_EQ(gpu.open(nullptr), types::Status::SUCCESS) << "GPU did not open successfully";
+    EXPECT_EQ(gpu.open(nullptr), types::Status::SUCCESS)
+      << "GPU did not open successfully";
   }
 
   {
@@ -52,12 +53,16 @@ TEST(GPU, Open)
 
   {
     auto driver = std::make_unique<MockGPUDriver>();
-    EXPECT_CALL(*driver, isOpen).Times(2).WillOnce(Return(false)).WillOnce(Return(true));
+    EXPECT_CALL(*driver, isOpen)
+      .Times(2)
+      .WillOnce(Return(false))
+      .WillOnce(Return(true));
     EXPECT_CALL(*driver, open).Times(1);
 
     GPUTest gpu;
     gpu.setDriver(std::move(driver));
-    EXPECT_EQ(gpu.open(nullptr), types::Status::SUCCESS) << "GPU did not open successfully";
+    EXPECT_EQ(gpu.open(nullptr), types::Status::SUCCESS)
+      << "GPU did not open successfully";
   }
 }
 
@@ -71,7 +76,8 @@ TEST(GPU, Render)
 
     GPUTest gpu;
     gpu.setDriver(std::move(driver));
-    EXPECT_EQ(gpu.render(nullptr, {}), types::Status::FAIL) << "GPU did not fail to render";
+    EXPECT_EQ(gpu.render(nullptr, {}), types::Status::FAIL)
+      << "GPU did not fail to render";
   }
 
   {
@@ -81,7 +87,8 @@ TEST(GPU, Render)
 
     GPUTest gpu;
     gpu.setDriver(std::move(driver));
-    EXPECT_EQ(gpu.render(nullptr, {}), types::Status::FAIL) << "GPU did not fail to render";
+    EXPECT_EQ(gpu.render(nullptr, {}), types::Status::FAIL)
+      << "GPU did not fail to render";
   }
 
   {
@@ -92,7 +99,8 @@ TEST(GPU, Render)
 
     GPUTest gpu;
     gpu.setDriver(std::move(driver));
-    EXPECT_EQ(gpu.render(nullptr, {}), types::Status::SUCCESS) << "GPU did not render successfully";
+    EXPECT_EQ(gpu.render(nullptr, {}), types::Status::SUCCESS)
+      << "GPU did not render successfully";
   }
 }
 
@@ -106,7 +114,8 @@ TEST(GPU, Close)
 
     GPUTest gpu;
     gpu.setDriver(std::move(driver));
-    EXPECT_EQ(gpu.close(), types::Status::SUCCESS) << "GPU did not close successfully";
+    EXPECT_EQ(gpu.close(), types::Status::SUCCESS)
+      << "GPU did not close successfully";
   }
 
   {
@@ -116,6 +125,7 @@ TEST(GPU, Close)
 
     GPUTest gpu;
     gpu.setDriver(std::move(driver));
-    EXPECT_EQ(gpu.close(), types::Status::SUCCESS) << "GPU did not close successfully";
+    EXPECT_EQ(gpu.close(), types::Status::SUCCESS)
+      << "GPU did not close successfully";
   }
 }
