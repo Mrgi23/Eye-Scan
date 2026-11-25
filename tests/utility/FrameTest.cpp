@@ -33,10 +33,7 @@ TEST(Frame, Create)
     ASSERT_FALSE(matFrame.empty()) << "Mat frame should not be empty";
     ASSERT_EQ(matFrame.rows, static_cast<int>(frame.size().height)) << "Mat frame has incorrect number of rows";
     ASSERT_EQ(matFrame.cols, static_cast<int>(frame.size().width)) << "Mat frame has incorrect number of columns";
-    EXPECT_EQ(matFrame.step, stride) << "Mat frame has incorrect step size";
+    EXPECT_EQ(matFrame.type(), CV_16UC1) << "Mat frame has incorrect type";
     EXPECT_NE(frame.owner(), nullptr) << "Frame owner pointer is incorrect";
-
-    EXPECT_EQ(matFrame.at<uint16_t>(0, 0), buffer[0]) << "Mat frame has incorrect value at (0, 0)";
-    EXPECT_EQ(matFrame.at<uint16_t>(0, 1), buffer[1]) << "Mat frame has incorrect value at (0, 1)";
   }
 }

@@ -79,7 +79,8 @@ namespace
     "  ) * rgb;\n"
     "  rgb = toneMap(max(rgb, 0.0));\n"
     "  rgb = vec3(linearToSrgb(rgb.r), linearToSrgb(rgb.g), linearToSrgb(rgb.b));\n"
-    "  gl_FragColor = vec4(clamp(rgb, 0.0, 1.0), 1.0);\n"
+    "  float gray = dot(clamp(rgb, 0.0, 1.0), vec3(0.2126, 0.7152, 0.0722));\n"
+    "  gl_FragColor = vec4(vec3(gray), 1.0);\n"
     "}\n";
   const char* vertexShaderSrc =
     "attribute vec2 aPos;\n"

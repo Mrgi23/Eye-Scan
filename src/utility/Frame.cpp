@@ -4,6 +4,8 @@
  */
 #include "utility/Frame.hpp"
 
+#include <opencv2/imgproc.hpp>
+
 namespace types
 {
   Frame::Frame(uint16_t* pixels, const Size& size, size_t stride,  std::shared_ptr<void> owner) noexcept
@@ -11,18 +13,22 @@ namespace types
   {
   }
 
-  cv::Mat Frame::mat() const noexcept
+  cv::Mat Frame::mat() const
   {
     if (!m_pixels)
       return cv::Mat();
 
-    return cv::Mat(
+    cv::Mat image(
       static_cast<int>(m_size.height),
       static_cast<int>(m_size.width),
       CV_16UC1,
       const_cast<uint16_t*>(m_pixels),
       m_stride
     );
+
+    cv::Mat result;
+    cv::cvtColor(image, result, cv::COLOR_BayerBG2GRAY);
+    return result;
   }
 
   Size Frame::size() const noexcept

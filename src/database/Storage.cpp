@@ -41,8 +41,7 @@ namespace db
 
     m_url = json["url"].get<std::string>();
     m_token = json["sas"].get<std::string>();
-
-    m_path = dataPath;
+    m_path = fs::weakly_canonical(dataPath);
 
     download();
     return logger::Info("Storage: Storage downloaded successfully.");

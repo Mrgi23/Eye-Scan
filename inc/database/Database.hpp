@@ -42,7 +42,7 @@ namespace db
     std::optional<QUuid> id;
     std::optional<QString> firstName;
     std::optional<QString> lastName;
-    cv::Mat img;
+    cv::Mat image;
     types::EyeCode code;
   };
 
@@ -55,6 +55,8 @@ namespace db
    * @param QString The last name of the person.
    * @param QDateTime The timestamp of the last modification.
    * @param std::array<types::EyeCode, MAX_CODES> The codes of the person.
+   * @param std::array<QString, MAX_CODES> The image paths of the person.
+   * @param size_t The number of entries currently stored for the person.
    */
   struct Person
   {
@@ -63,9 +65,14 @@ namespace db
     QString lastName;
     QDateTime modifiedAt;
     std::array<types::EyeCode, MAX_CODES> codes;
+    std::array<QString, MAX_CODES> images;
     size_t count;
   };
 
+  /**
+   * @class Database
+   * @brief Represents the database for storing and managing people.
+   */
   class Database
   {
     public:
@@ -107,12 +114,11 @@ namespace db
        * @brief Find a person in the database by their binary code.
        *
        * @param types::EyeCode The code to search for.
-       * @param Person The found person.
-       * @param double The distance of the found person.
+       * @param types::PersonView The found person.
        * @return Status::SUCCESS if the person was found,
        *         Status::FAIL if the person was not found.
        */
-      virtual types::Status find(const types::EyeCode&, Person&, double&);
+      virtual types::Status find(const types::EyeCode&, types::PersonView&);
 
       /**
        * @brief Get the number of people in the database.
@@ -155,7 +161,6 @@ namespace db
        *
        * @param fs::path The path to the person's directory.
        * @param Person The person to save.
-       * @param cv::Mat The image of the person to save.
        */
       static void savePerson(const fs::path&, const Person&, const cv::Mat&);
 
