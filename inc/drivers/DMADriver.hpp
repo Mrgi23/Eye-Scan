@@ -8,7 +8,8 @@
 
 /**
  * @namespace hardware
- * @brief Hardware interfaces for low‑level device operations (Camera, DMA, LED, GPU).
+ * @brief Hardware interfaces for low‑level device operations (Camera, DMA, LED,
+ * GPU).
  */
 namespace hardware
 {
@@ -26,12 +27,12 @@ namespace hardware
      */
     class IDMADriver
     {
-      public:
-        virtual ~IDMADriver() = default;
+    public:
+      virtual ~IDMADriver() = default;
 
-        virtual bool connect(const VirtualMemory&) = 0;
-        virtual bool cpu(uint16_t*&) const = 0;
-        virtual const VirtualMemory& memory() const = 0;
+      virtual bool connect(const VirtualMemory&) = 0;
+      virtual bool cpu(uint16_t*&) const = 0;
+      virtual const VirtualMemory& memory() const = 0;
     };
   } // namespace drivers
 } // namespace hardware

@@ -5,13 +5,13 @@
 #include "database/Storage.hpp"
 #include "utility/Logger.hpp"
 
-#include <nlohmann/json.hpp>
 #include <QDomDocument>
 #include <QEventLoop>
 #include <QFile>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QUrl>
+#include <nlohmann/json.hpp>
 
 #include <fstream>
 #include <unordered_set>
@@ -24,13 +24,17 @@ namespace db
     return instance;
   }
 
-  types::Status Storage::initialize(const fs::path& authPath, const fs::path& dataPath)
+  types::Status Storage::initialize(
+    const fs::path& authPath, const fs::path& dataPath
+  )
   {
     if (!m_path.empty())
       return logger::Info("Storage: Storage is already initialized.");
 
     if (!fs::exists(authPath))
-      return logger::Warning(std::format("Storage: Auth file does not exist: {}.", authPath.string()));
+      return logger::Warning(
+        std::format("Storage: Auth file does not exist: {}.", authPath.string())
+      );
 
     std::ifstream stream(authPath);
     nlohmann::json json;
@@ -59,7 +63,9 @@ namespace db
   {
     if (m_url.empty())
     {
-      return logger::Warning("Storage: Storage is not initialized. Call initialize first.");
+      return logger::Warning(
+        "Storage: Storage is not initialized. Call initialize first."
+      );
     }
 
     QByteArray xml;
@@ -83,14 +89,17 @@ namespace db
   types::Status Storage::sync()
   {
     if (m_path.empty())
-      return logger::Warning("Storage: Storage is not initialized. Call initialize first.");
+      return logger::Warning(
+        "Storage: Storage is not initialized. Call initialize first."
+      );
 
     for (const auto& entry : fs::recursive_directory_iterator(m_path))
     {
       if (fs::is_regular_file(entry))
       {
         const fs::path relative = fs::relative(entry.path(), m_path);
-        const QString blob = QString::fromStdString("Eye-Scan/" + relative.generic_string());
+        const QString blob =
+          QString::fromStdString("Eye-Scan/" + relative.generic_string());
         QFile file(QString::fromStdString(entry.path().string()));
 
         file.open(QIODevice::ReadOnly);
@@ -179,7 +188,9 @@ namespace db
       const QString error = reply->errorString();
       reply->deleteLater();
       logger::Error(
-        std::format("Storage: Failed to get URL: {} Error: {}", url, error.toStdString()),
+        std::format(
+          "Storage: Failed to get URL: {} Error: {}", url, error.toStdString()
+        ),
         types::Error::INVALID_ARGUMENT
       );
     }

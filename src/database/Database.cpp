@@ -27,7 +27,9 @@ namespace db
       return types::Status::SUCCESS;
 
     if (!fs::exists(path))
-      return logger::Warning(std::format("Database: Database file does not exist: {}.", path.string()));
+      return logger::Warning(
+        std::format("Database: Database file does not exist: {}.", path.string())
+      );
 
     m_path = fs::weakly_canonical(path);
     m_people.clear();
@@ -54,7 +56,9 @@ namespace db
   types::Status Database::add(const Info& info)
   {
     if (m_path.empty())
-      return logger::Warning("Database: Database not initialized. Call initialize first.");
+      return logger::Warning(
+        "Database: Database not initialized. Call initialize first."
+      );
 
     if (info.image.empty())
       return logger::Warning("Database: Image must be provided.");
@@ -65,7 +69,9 @@ namespace db
       if (m_people.find(*info.id) == m_people.end())
       {
         if (!info.firstName.has_value() || !info.lastName.has_value())
-          return logger::Warning("Database: First name and last name must be provided for new person.");
+          return logger::Warning(
+            "Database: First name and last name must be provided for new person."
+          );
 
         person.id = *info.id;
         person.firstName = *info.firstName;
@@ -76,13 +82,17 @@ namespace db
       {
         person = m_people.at(*info.id);
         if (person.count == MAX_CODES)
-          return logger::Warning("Database: Maximum number of codes reached for this person.");
+          return logger::Warning(
+            "Database: Maximum number of codes reached for this person."
+          );
       }
     }
     else
     {
       if (!info.firstName.has_value() || !info.lastName.has_value())
-        return logger::Warning("Database: First name and last name must be provided for new person.");
+        return logger::Warning(
+          "Database: First name and last name must be provided for new person."
+        );
 
       person.id = QUuid::createUuid();
       person.firstName = *info.firstName;
@@ -105,7 +115,9 @@ namespace db
   types::Status Database::find(const types::EyeCode& code, types::PersonView& person)
   {
     if (m_path.empty())
-      return logger::Warning("Database: Database not initialized. Call initialize first.");
+      return logger::Warning(
+        "Database: Database not initialized. Call initialize first."
+      );
 
     const Person* bestPerson = nullptr;
     double bestDistance = std::numeric_limits<double>::max();
@@ -159,9 +171,11 @@ namespace db
     const auto metadataPath = dir / "metadata.json";
     const auto imagesDir = dir / "images";
     const auto codesDir = dir / "codes";
-    if (!fs::exists(metadataPath) ||  !fs::exists(imagesDir) || !fs::exists(codesDir))
+    if (!fs::exists(metadataPath) || !fs::exists(imagesDir) || !fs::exists(codesDir))
     {
-      logger::Warning(std::format("Database: Person metadata, images or codes not found: {}.", dir.string()));
+      logger::Warning(std::format(
+        "Database: Person metadata, images or codes not found: {}.", dir.string()
+      ));
       return std::nullopt;
     }
     std::ifstream stream(metadataPath);
@@ -170,9 +184,12 @@ namespace db
 
     Person person;
     person.id = QUuid::fromString(json.at("id").get<std::string>());
-    person.firstName = QString::fromStdString(json.at("firstName").get<std::string>());
+    person.firstName =
+      QString::fromStdString(json.at("firstName").get<std::string>());
     person.lastName = QString::fromStdString(json.at("lastName").get<std::string>());
-    person.modifiedAt = QDateTime::fromString(QString::fromStdString(json.at("modifiedAt").get<std::string>()), Qt::ISODate);
+    person.modifiedAt = QDateTime::fromString(
+      QString::fromStdString(json.at("modifiedAt").get<std::string>()), Qt::ISODate
+    );
     person.count = json.at("count").get<size_t>();
 
     auto load = [&stream](std::bitset<BITSET_SIZE>& bits)
@@ -204,7 +221,9 @@ namespace db
     return person;
   }
 
-  void Database::savePerson(const fs::path& dir, const Person& person, const cv::Mat& image)
+  void Database::savePerson(
+    const fs::path& dir, const Person& person, const cv::Mat& image
+  )
   {
     fs::create_directories(dir);
 

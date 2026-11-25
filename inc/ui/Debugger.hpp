@@ -21,20 +21,20 @@ namespace ui
   {
     Q_OBJECT
 
-    public:
-      /**
-       * @brief Construct new Debugger object.
-       *
-       * @param QWidget* The parent QWidget, default is nullptr.
-       */
-      explicit Debugger(QWidget* = nullptr);
+  public:
+    /**
+     * @brief Construct new Debugger object.
+     *
+     * @param QWidget* The parent QWidget, default is nullptr.
+     */
+    explicit Debugger(QWidget* = nullptr);
 
-      /**
-       * @brief Destroy the Debugger object.
-       */
-      ~Debugger() override;
+    /**
+     * @brief Destroy the Debugger object.
+     */
+    ~Debugger() override;
 
-    private:
-      QTextEdit* m_view = nullptr;
+  private:
+    QTextEdit* m_view = nullptr;
   };
 } // namespace ui
