@@ -24,15 +24,17 @@ TEST(Frame, Create)
     buffer[0] = 23;
     buffer[1] = 42;
 
-    types::Size size{ 5, 10 };
+    types::Size size{5, 10};
     size_t stride = 20;
 
     types::Frame frame(buffer, size, stride, std::make_shared<int>(1));
     cv::Mat matFrame = frame.mat();
 
     ASSERT_FALSE(matFrame.empty()) << "Mat frame should not be empty";
-    ASSERT_EQ(matFrame.rows, static_cast<int>(frame.size().height)) << "Mat frame has incorrect number of rows";
-    ASSERT_EQ(matFrame.cols, static_cast<int>(frame.size().width)) << "Mat frame has incorrect number of columns";
+    ASSERT_EQ(matFrame.rows, static_cast<int>(frame.size().height))
+      << "Mat frame has incorrect number of rows";
+    ASSERT_EQ(matFrame.cols, static_cast<int>(frame.size().width))
+      << "Mat frame has incorrect number of columns";
     EXPECT_EQ(matFrame.type(), CV_16UC1) << "Mat frame has incorrect type";
     EXPECT_NE(frame.owner(), nullptr) << "Frame owner pointer is incorrect";
   }
