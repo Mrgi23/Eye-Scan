@@ -4,10 +4,10 @@
  */
 #include "ui/Matcher.hpp"
 
-#include <gtest/gtest.h>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/imgcodecs.hpp>
 #include <QTest>
+#include <gtest/gtest.h>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
 
 #include <filesystem>
 
@@ -44,7 +44,9 @@ TEST(Matcher, NewPerson)
   }
 
   {
-    cv::imwrite(imagePath.string(), cv::Mat(3040, 4056, CV_16UC1, cv::Scalar(65535)));
+    cv::imwrite(
+      imagePath.string(), cv::Mat(3040, 4056, CV_16UC1, cv::Scalar(65535))
+    );
     person.match = 0.95;
     matcher.onNewPerson(person);
     QTest::qWait(50);
@@ -114,7 +116,9 @@ TEST(Matcher, NewPerson)
 
     const QLabel* label = matcher.findChild<QLabel*>("codeFileLabel");
     ASSERT_NE(label, nullptr);
-    EXPECT_EQ(label->text(), QString::fromStdString(std::format("{}.bin", person.index)));
+    EXPECT_EQ(
+      label->text(), QString::fromStdString(std::format("{}.bin", person.index))
+    );
   }
 
   {
@@ -123,7 +127,9 @@ TEST(Matcher, NewPerson)
 
     const QLabel* label = matcher.findChild<QLabel*>("imageFileLabel");
     ASSERT_NE(label, nullptr);
-    EXPECT_EQ(label->text(), QString::fromStdString(std::format("{}.png", person.index)));
+    EXPECT_EQ(
+      label->text(), QString::fromStdString(std::format("{}.png", person.index))
+    );
   }
 
   fs::remove_all(path);

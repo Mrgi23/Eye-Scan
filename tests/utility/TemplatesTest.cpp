@@ -2,25 +2,30 @@
  * SPDX-License-Identifier: Apache-2.0
  * Copyright (c) 2026 Aleksa Markovic <aleksamarkovic96@outlook.com>
  */
-#include "utility/Frame.hpp"
 #include "utility/Templates.hpp"
+#include "utility/Frame.hpp"
 
 #include <gtest/gtest.h>
 
 static types::Frame dummy()
 {
   std::shared_ptr<uint16_t[]> buffer(new uint16_t[1]);
-  return types::Frame{ buffer.get(), { 1, 1 }, 2, buffer };
+  return types::Frame{buffer.get(), {1, 1}, 2, buffer};
 }
 
 TEST(Queue, Push)
 {
   types::Queue<types::Frame, 4> queue;
-  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS) << "Push failed unexpectedly";
-  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS) << "Push failed unexpectedly";
-  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS) << "Push failed unexpectedly";
-  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS) << "Push failed unexpectedly";
-  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::FAIL) << "Push should have failed due to full queue";
+  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS)
+    << "Push failed unexpectedly";
+  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS)
+    << "Push failed unexpectedly";
+  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS)
+    << "Push failed unexpectedly";
+  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::SUCCESS)
+    << "Push failed unexpectedly";
+  EXPECT_EQ(queue.push(std::move(dummy())), types::Status::FAIL)
+    << "Push should have failed due to full queue";
 }
 
 TEST(Queue, Pop)
@@ -44,7 +49,8 @@ TEST(Queue, Pop)
   ASSERT_EQ(queue.pop(value), types::Status::SUCCESS) << "Pop failed unexpectedly";
   EXPECT_NE(value.owner(), nullptr) << "Pop returned incorrect value";
 
-  EXPECT_EQ(queue.pop(value), types::Status::FAIL) << "Pop should have failed due to empty queue";
+  EXPECT_EQ(queue.pop(value), types::Status::FAIL)
+    << "Pop should have failed due to empty queue";
 }
 
 TEST(Queue, Clear)
@@ -57,5 +63,6 @@ TEST(Queue, Clear)
   queue.clear();
 
   types::Frame value;
-  EXPECT_EQ(queue.pop(value), types::Status::FAIL) << "Pop should have failed due to empty queue after clear";
+  EXPECT_EQ(queue.pop(value), types::Status::FAIL)
+    << "Pop should have failed due to empty queue after clear";
 }
