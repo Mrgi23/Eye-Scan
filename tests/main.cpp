@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: Apache-2.0
  * Copyright (c) 2026 Aleksa Markovic <aleksamarkovic96@outlook.com>
  */
-#include <gtest/gtest.h>
 #include <QApplication>
+#include <gtest/gtest.h>
 
 int main(int argc, char** argv)
 {
