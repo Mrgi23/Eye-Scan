@@ -1,0 +1,45 @@
+Language: Cpp
+BasedOnStyle: LLVM
+ColumnLimit: 85
+LineEnding: DeriveCRLF
+
+# Indentation & Spaces
+TabWidth: 2
+IndentWidth: 2
+AlignOperands: DontAlign
+ContinuationIndentWidth: 2
+ConstructorInitializerIndentWidth: 2
+BracedInitializerIndentWidth: 2
+IndentCaseBlocks: true
+MaxEmptyLinesToKeep: 1
+SeparateDefinitionBlocks: Always
+KeepEmptyLines:
+  AtStartOfBlock: false
+  AtStartOfFile: false
+
+# Pointer & References
+PointerAlignment: Left
+ReferenceAlignment: Left
+RequiresClausePosition: WithPreceding
+
+# Braces & Wrapping
+BreakBeforeBraces: Allman
+NamespaceIndentation: All
+InsertBraces: false
+
+# Function Formatting
+AlignAfterOpenBracket: BlockIndent
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: false
+BreakAfterReturnType: Automatic
+SpaceBeforeParensOptions:
+  AfterRequiresInClause: true
+
+# Short Statements
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+
+PenaltyReturnTypeOnItsOwnLine: 1000

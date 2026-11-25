@@ -31,7 +31,7 @@ Ensure that all required dependencies are installed.
 
 ### Installation
 ```sh
-sudo apt update && sudo apt install -y build-essential cmake curl gcc g++ git gpg \
+sudo apt update && sudo apt install -y build-essential cmake clang-format curl gcc g++ git gpg \
 lcov libavif-dev libcamera-dev libdrm-dev libegl1-mesa-dev libgles2-mesa-dev \
 libjpeg-dev libopenblas-dev libopenjp2-7-dev libopenexr-dev libpng-dev libwebp-dev \
 ninja-build pipx pkg-config qt6-base-dev qt6-tools-dev qt6-wayland
