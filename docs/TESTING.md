@@ -31,24 +31,38 @@ Ensure that all required dependencies are installed.
 
 ### Installation
 ```sh
-sudo apt update && sudo apt install -y build-essential cmake clang-format curl gcc g++ git gpg \
-lcov libavif-dev libcamera-dev libdrm-dev libegl1-mesa-dev libgles2-mesa-dev \
-libjpeg-dev libopenblas-dev libopenjp2-7-dev libopenexr-dev libpng-dev libwebp-dev \
-ninja-build pipx pkg-config qt6-base-dev qt6-tools-dev qt6-wayland
+sudo apt update
+sudo apt install -y \
+  build-essential cmake clang-format curl gcc g++ git gpg \
+  lcov libavif-dev libcamera-dev libdrm-dev libegl1-mesa-dev libgles2-mesa-dev \
+  libjpeg-dev libopenblas-dev libopenjp2-7-dev libopenexr-dev libpng-dev libwebp-dev \
+  ninja-build pipx pkg-config qt6-base-dev qt6-tools-dev qt6-wayland
 
 sudo pipx ensurepath && sudo pipx install conan
-conan remote add conancenter https://center2.conan.io
-conan remote add artifactory https://conan.mrgi23.com/artifactory/api/conan/Conan-Index
+conan profile detect --force
+conan remote add conancenter https://center2.conan.io --force
+conan remote add artifactory https://conan.mrgi23.com/artifactory/api/conan/Conan-Index --force
+```
+Setup dependencies using the provided installation script:
+```sh
+./scripts/install-packages.sh
 ```
 
 ##  Running Tests
 ```sh
 cd tests
+
 conan install . --build=missing
 cmake -G Ninja --preset conan-release
 cmake --build --preset conan-release
+
 cd build/Release
 ./tests
+```
+Run tests using the provided build script:
+```sh
+./scripts/run-tests.sh
+./scripts/run-tests.sh clean # Cleans the build directory before running tests
 ```
 
 ## **Code Coverage**
@@ -61,11 +75,18 @@ C++ code coverage is generated using **GCC's (`gcov`)**, which only works with *
 - Windows: **Must use WSL with GCC\G++**
 ```sh
 cd tests
+
 conan install . --build=missing
 cmake -G Ninja --preset conan-release
 cmake --build --preset conan-release
+
 cd build/Release
 ninja coverage
+```
+Perform coverage analysis using provided build script:
+```sh
+./scripts/run-tests.sh coverage
+./scripts/run-tests.sh clean # Cleans the build directory before running coverage
 ```
 
 ### Coverage Report Locations
