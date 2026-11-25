@@ -9,8 +9,8 @@
 
 #include <libcamera/camera.h>
 #include <libcamera/camera_manager.h>
-#include <libcamera/controls.h>
 #include <libcamera/control_ids.h>
+#include <libcamera/controls.h>
 #include <libcamera/formats.h>
 #include <libcamera/framebuffer.h>
 #include <libcamera/framebuffer_allocator.h>
@@ -30,50 +30,52 @@ namespace hardware
   {
     class CameraDriver : public ICameraDriver
     {
-      public:
-        CameraDriver() noexcept;
-        ~CameraDriver() override;
+    public:
+      CameraDriver() noexcept;
+      ~CameraDriver() override;
 
-        DISABLE_COPY_AND_MOVE(CameraDriver)
+      DISABLE_COPY_AND_MOVE(CameraDriver)
 
-        void open(const std::string& device) override;
-        bool isOpen() const noexcept override;
-        void connect(bool on) noexcept override;
-        void configure(const types::Size& size, const CameraControls& controls) override;
-        bool isConfigured() const noexcept override;
-        void start() override;
-        bool capture(types::Frame& frame) override;
-        void stop() override;
-        bool isActive() const noexcept override;
-        void close() override;
+      void open(const std::string& device) override;
+      bool isOpen() const noexcept override;
+      void connect(bool on) noexcept override;
+      void configure(const types::Size& size, const CameraControls& controls)
+        override;
+      bool isConfigured() const noexcept override;
+      void start() override;
+      bool capture(types::Frame& frame) override;
+      void stop() override;
+      bool isActive() const noexcept override;
+      void close() override;
 
-      private:
-        void callback(libcamera::Request* request);
+    private:
+      void callback(libcamera::Request* request);
 
-      private:
-        std::unique_ptr<libcamera::CameraManager> m_manager;
-        std::unique_ptr<libcamera::ControlList> m_controls;
-        std::vector<libcamera::StreamRole> m_roles;
-        std::shared_ptr<libcamera::Camera> m_camera;
-        std::unique_ptr<libcamera::CameraConfiguration> m_config;
-        libcamera::StreamConfiguration* m_stream = nullptr;
+    private:
+      std::unique_ptr<libcamera::CameraManager> m_manager;
+      std::unique_ptr<libcamera::ControlList> m_controls;
+      std::vector<libcamera::StreamRole> m_roles;
+      std::shared_ptr<libcamera::Camera> m_camera;
+      std::unique_ptr<libcamera::CameraConfiguration> m_config;
+      libcamera::StreamConfiguration* m_stream = nullptr;
 
-        std::unique_ptr<libcamera::FrameBufferAllocator> m_allocator;
-        std::vector<libcamera::FrameBuffer*> m_buffers;
-        std::vector<std::unique_ptr<libcamera::Request>> m_requests;
-        types::Queue<types::Frame, 4> m_frames;
-        int m_warmup = 15;
+      std::unique_ptr<libcamera::FrameBufferAllocator> m_allocator;
+      std::vector<libcamera::FrameBuffer*> m_buffers;
+      std::vector<std::unique_ptr<libcamera::Request>> m_requests;
+      types::Queue<types::Frame, 4> m_frames;
+      int m_warmup = 15;
 
-        bool m_isOpen = false;
-        bool m_isConfigured = false;
-        bool m_isActive = false;
+      bool m_isOpen = false;
+      bool m_isConfigured = false;
+      bool m_isActive = false;
     };
 
     CameraDriver::CameraDriver() noexcept
     {
       m_manager = std::make_unique<libcamera::CameraManager>();
-      m_roles = { libcamera::StreamRole::Raw };
-      m_controls = std::make_unique<libcamera::ControlList>(libcamera::controls::controls);
+      m_roles = {libcamera::StreamRole::Raw};
+      m_controls =
+        std::make_unique<libcamera::ControlList>(libcamera::controls::controls);
     }
 
     CameraDriver::~CameraDriver()
@@ -89,12 +91,17 @@ namespace hardware
     void CameraDriver::open(const std::string& device)
     {
       {
-        const std::string tuningFileName = device.find("noir") == std::string::npos ? std::format("{}_noir.json", device) : std::format("{}.json", device);
-        const std::string tuningFile = std::format("/usr/share/libcamera/ipa/rpi/pisp/{}", tuningFileName);
+        const std::string tuningFileName = device.find("noir") == std::string::npos
+          ? std::format("{}_noir.json", device)
+          : std::format("{}.json", device);
+        const std::string tuningFile =
+          std::format("/usr/share/libcamera/ipa/rpi/pisp/{}", tuningFileName);
         setenv("LIBCAMERA_RPI_TUNING_FILE", tuningFile.c_str(), 1);
       }
       if (m_manager->start())
-        logger::Error("Camera: Failed to start Camera manager.", types::Error::RUNTIME_ERROR);
+        logger::Error(
+          "Camera: Failed to start Camera manager.", types::Error::RUNTIME_ERROR
+        );
 
       for (const auto& camera : m_manager->cameras())
       {
@@ -118,7 +125,9 @@ namespace hardware
       if (m_camera->acquire())
       {
         close();
-        logger::Error("Camera: Failed to acquire camera.", types::Error::RUNTIME_ERROR);
+        logger::Error(
+          "Camera: Failed to acquire camera.", types::Error::RUNTIME_ERROR
+        );
       }
 
       connect(true);
@@ -138,7 +147,9 @@ namespace hardware
         m_camera->requestCompleted.disconnect(this, &CameraDriver::callback);
     }
 
-    void CameraDriver::configure(const types::Size& size, const CameraControls& controls)
+    void CameraDriver::configure(
+      const types::Size& size, const CameraControls& controls
+    )
     {
       m_config = m_camera->generateConfiguration(m_roles);
       if (!m_config || m_config->empty())
@@ -148,7 +159,9 @@ namespace hardware
       }
       m_stream = &m_config->at(0);
       m_stream->pixelFormat = libcamera::formats::SRGGB16;
-      m_stream->size = { static_cast<uint32_t>(size.width), static_cast<uint32_t>(size.height) };
+      m_stream->size = {
+        static_cast<uint32_t>(size.width), static_cast<uint32_t>(size.height)
+      };
       if (m_config->validate() == libcamera::CameraConfiguration::Invalid)
       {
         logger::Warning("Camera: Failed to generate camera configuration.");
@@ -165,7 +178,7 @@ namespace hardware
         logger::Error("Camera: FPS cannot be zero.", types::Error::INVALID_ARGUMENT);
 
       const int64_t frameTime = 1000000 / controls.fps;
-      std::array<int64_t, 2> limits = { frameTime, frameTime };
+      std::array<int64_t, 2> limits = {frameTime, frameTime};
       m_controls->set(libcamera::controls::FrameDurationLimits, limits);
 
       const bool autoExposure = controls.autoExposure.value_or(true);
@@ -175,12 +188,18 @@ namespace hardware
       {
         const int32_t exposureTime = controls.exposureTime.value_or(frameTime / 2);
         if (exposureTime < 0 || exposureTime > frameTime)
-          logger::Error("Camera: Exposure time exceeds maximum allowed by FPS.", types::Error::INVALID_ARGUMENT);
+          logger::Error(
+            "Camera: Exposure time exceeds maximum allowed by FPS.",
+            types::Error::INVALID_ARGUMENT
+          );
         m_controls->set(libcamera::controls::ExposureTime, exposureTime);
 
         const float analogueGain = controls.analogueGain.value_or(1.0f);
         if (analogueGain < 1.0f || analogueGain > 16.0f)
-          logger::Error("Camera: Analogue gain must be between 1.0 and 16.0.", types::Error::INVALID_ARGUMENT);
+          logger::Error(
+            "Camera: Analogue gain must be between 1.0 and 16.0.",
+            types::Error::INVALID_ARGUMENT
+          );
         m_controls->set(libcamera::controls::AnalogueGain, analogueGain);
       }
       m_isConfigured = true;
@@ -277,21 +296,23 @@ namespace hardware
         m_warmup--;
         request->reuse(libcamera::Request::ReuseBuffers);
         if (m_camera->queueRequest(request) < 0)
-          logger::Error("Camera: Camera stream is lost due to an error.", types::Error::RUNTIME_ERROR);
+          logger::Error(
+            "Camera: Camera stream is lost due to an error.",
+            types::Error::RUNTIME_ERROR
+          );
         return;
       }
 
       if (m_stream && request->buffers().count(m_stream->stream()) > 0)
       {
-        libcamera::FrameBuffer* const buffer = request->buffers().at(m_stream->stream());
+        libcamera::FrameBuffer* const buffer =
+          request->buffers().at(m_stream->stream());
         const auto& plane = buffer->planes()[0];
 
         const std::shared_ptr<DMA> dma = std::make_shared<DMA>();
         const VirtualMemory vmem{
-          {
-            m_stream->stream()->configuration().size.width,
-            m_stream->stream()->configuration().size.height
-          },
+          {m_stream->stream()->configuration().size.width,
+           m_stream->stream()->configuration().size.height},
           plane.length,
           m_stream->stream()->configuration().stride,
           plane.offset,
@@ -302,7 +323,10 @@ namespace hardware
         {
           request->reuse(libcamera::Request::ReuseBuffers);
           if (m_camera->queueRequest(request) < 0)
-            logger::Error("Camera: Camera stream is lost due to an error.", types::Error::RUNTIME_ERROR);
+            logger::Error(
+              "Camera: Camera stream is lost due to an error.",
+              types::Error::RUNTIME_ERROR
+            );
           return;
         }
 
@@ -316,10 +340,14 @@ namespace hardware
 
         request->reuse(libcamera::Request::ReuseBuffers);
         if (m_camera->queueRequest(request) < 0)
-          logger::Error("Camera: Camera stream is lost due to an error.", types::Error::RUNTIME_ERROR);
+          logger::Error(
+            "Camera: Camera stream is lost due to an error.",
+            types::Error::RUNTIME_ERROR
+          );
       }
     }
-  } // namespace hardware
+  } // namespace drivers
+
   // LCOV_EXCL_STOP
 
   Camera::Camera() noexcept : m_driver(std::make_unique<drivers::CameraDriver>())
@@ -338,16 +366,22 @@ namespace hardware
     return logger::Info("Camera: Camera opened successfully.");
   }
 
-  types::Status Camera::configure(const types::Size& size, const CameraControls& config)
+  types::Status Camera::configure(
+    const types::Size& size, const CameraControls& config
+  )
   {
     if (!m_driver->isOpen())
       return logger::Warning("Camera: Camera is not opened. Call open first.");
 
     if (m_driver->isActive())
-      return logger::Warning("Camera: Cannot configure while streaming. Call stop first.");
+      return logger::Warning(
+        "Camera: Cannot configure while streaming. Call stop first."
+      );
 
     m_driver->configure(size, config);
-    return m_driver->isConfigured() ? logger::Info("Camera: Camera configurated successful.") : types::Status::FAIL;
+    return m_driver->isConfigured()
+      ? logger::Info("Camera: Camera configurated successful.")
+      : types::Status::FAIL;
   }
 
   types::Status Camera::start()
@@ -356,13 +390,17 @@ namespace hardware
       return logger::Warning("Camera: Camera is not opened. Call open first.");
 
     if (!m_driver->isConfigured())
-      return logger::Warning("Camera: Camera is not configured. Call configure first.");
+      return logger::Warning(
+        "Camera: Camera is not configured. Call configure first."
+      );
 
     if (m_driver->isActive())
       return logger::Info("Camera: Camera is already active.");
 
     m_driver->start();
-    return m_driver->isActive() ? logger::Info("Camera: Camera started successfully.") : types::Status::FAIL;
+    return m_driver->isActive()
+      ? logger::Info("Camera: Camera started successfully.")
+      : types::Status::FAIL;
   }
 
   types::Status Camera::capture(types::Frame& frame)
@@ -371,7 +409,9 @@ namespace hardware
       return logger::Warning("Camera: Camera is not opened. Call open first.");
 
     if (!m_driver->isConfigured())
-      return logger::Warning("Camera: Camera is not configured. Call configure first.");
+      return logger::Warning(
+        "Camera: Camera is not configured. Call configure first."
+      );
 
     if (!m_driver->isActive())
       return logger::Warning("Camera: Camera is not active. Call start first.");
@@ -397,7 +437,9 @@ namespace hardware
       return logger::Info("Camera: Camera is already closed.");
 
     if (m_driver->isActive())
-      return logger::Warning("Camera: Cannot close camera while streaming is active. Call stop first.");
+      return logger::Warning(
+        "Camera: Cannot close camera while streaming is active. Call stop first."
+      );
 
     m_driver->close();
     return logger::Info("Camera: Camera closed successfully.");

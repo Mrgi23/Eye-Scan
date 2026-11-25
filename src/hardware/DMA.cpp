@@ -21,7 +21,8 @@ namespace
     }();
     return pageSize;
   }
-}
+} // namespace
+
 // LCOV_EXCL_STOP
 
 namespace hardware
@@ -31,25 +32,25 @@ namespace hardware
   {
     class DMADriver : public IDMADriver
     {
-      public:
-        DMADriver() noexcept = default;
-        ~DMADriver() noexcept override;
+    public:
+      DMADriver() noexcept = default;
+      ~DMADriver() noexcept override;
 
-        DISABLE_COPY_AND_MOVE(DMADriver)
+      DISABLE_COPY_AND_MOVE(DMADriver)
 
-        bool connect(const VirtualMemory& memory) override;
-        bool cpu(uint16_t*& data) const override;
-        const VirtualMemory& memory() const noexcept override;
+      bool connect(const VirtualMemory& memory) override;
+      bool cpu(uint16_t*& data) const override;
+      const VirtualMemory& memory() const noexcept override;
 
-      private:
-        bool map() noexcept;
-        void unmap() noexcept;
+    private:
+      bool map() noexcept;
+      void unmap() noexcept;
 
-      private:
-        VirtualMemory m_memory;
-        void* m_addr = nullptr;
-        size_t m_length = 0;
-        uint64_t m_offset = 0;
+    private:
+      VirtualMemory m_memory;
+      void* m_addr = nullptr;
+      size_t m_length = 0;
+      uint64_t m_offset = 0;
     };
 
     DMADriver::~DMADriver() noexcept
@@ -107,12 +108,14 @@ namespace hardware
     {
       unmap();
 
-      const uint64_t pageStart = m_offset & ~(static_cast<uint64_t>(pageSize()) - 1ULL);
+      const uint64_t pageStart =
+        m_offset & ~(static_cast<uint64_t>(pageSize()) - 1ULL);
       m_offset -= pageStart;
       m_length += static_cast<size_t>(m_offset);
 
       m_addr = mmap(
-        nullptr, m_length, PROT_READ, MAP_SHARED, m_memory.fd, static_cast<off_t>(pageStart)
+        nullptr, m_length, PROT_READ, MAP_SHARED, m_memory.fd,
+        static_cast<off_t>(pageStart)
       );
       if (m_addr == MAP_FAILED)
         m_addr = nullptr;
@@ -128,7 +131,8 @@ namespace hardware
       m_length = m_memory.length;
       m_offset = m_memory.offset;
     }
-  }
+  } // namespace drivers
+
   // LCOV_EXCL_STOP
 
   DMA::DMA() noexcept : m_driver(std::make_unique<drivers::DMADriver>())

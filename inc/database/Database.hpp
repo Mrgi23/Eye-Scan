@@ -8,10 +8,10 @@
 #include "utility/Macros.hpp"
 #include "utility/Types.hpp"
 
-#include <opencv2/core/mat.hpp>
 #include <QDateTime>
 #include <QString>
 #include <QUuid>
+#include <opencv2/core/mat.hpp>
 
 #include <array>
 #include <filesystem>
@@ -75,97 +75,98 @@ namespace db
    */
   class Database
   {
-    public:
-      /**
-       * @brief Get the singleton instance of the Database.
-       *
-       * @return Reference to the Database instance.
-       */
-      static Database& instance();
+  public:
+    /**
+     * @brief Get the singleton instance of the Database.
+     *
+     * @return Reference to the Database instance.
+     */
+    static Database& instance();
 
-      DISABLE_COPY_AND_MOVE(Database);
+    DISABLE_COPY_AND_MOVE(Database);
 
-      /**
-       * @brief Initialize the database from the specified file path.
-       *
-       * @param fs::path The path to the database file, defaults to "./database".
-       * @return Status::SUCCESS if the database was initialized successfully,
-       *         Status::FAIL if the database could not be initialized.
-       */
-      types::Status initialize(const fs::path& = "./database");
+    /**
+     * @brief Initialize the database from the specified file path.
+     *
+     * @param fs::path The path to the database file, defaults to "./database".
+     * @return Status::SUCCESS if the database was initialized successfully,
+     *         Status::FAIL if the database could not be initialized.
+     */
+    types::Status initialize(const fs::path& = "./database");
 
-      /**
-       * @brief Deinitialize the database, removing all stored people.
-       *
-       * @return Status::SUCCESS after the database was deinitialized successfully,
-       */
-      types::Status deinitialize();
+    /**
+     * @brief Deinitialize the database, removing all stored people.
+     *
+     * @return Status::SUCCESS after the database was deinitialized successfully,
+     */
+    types::Status deinitialize();
 
-      /**
-       * @brief Add a new person to the database.
-       *
-       * @param Info The information of the person to add.
-       * @return Status::SUCCESS if the person was added successfully,
-       *         Status::FAIL if the person could not be added.
-       */
-      virtual types::Status add(const Info&);
+    /**
+     * @brief Add a new person to the database.
+     *
+     * @param Info The information of the person to add.
+     * @return Status::SUCCESS if the person was added successfully,
+     *         Status::FAIL if the person could not be added.
+     */
+    virtual types::Status add(const Info&);
 
-      /**
-       * @brief Find a person in the database by their binary code.
-       *
-       * @param types::EyeCode The code to search for.
-       * @param types::PersonView The found person.
-       * @return Status::SUCCESS if the person was found,
-       *         Status::FAIL if the person was not found.
-       */
-      virtual types::Status find(const types::EyeCode&, types::PersonView&);
+    /**
+     * @brief Find a person in the database by their binary code.
+     *
+     * @param types::EyeCode The code to search for.
+     * @param types::PersonView The found person.
+     * @return Status::SUCCESS if the person was found,
+     *         Status::FAIL if the person was not found.
+     */
+    virtual types::Status find(const types::EyeCode&, types::PersonView&);
 
-      /**
-       * @brief Get the number of people in the database.
-       *
-       * @return The number of people in the database.
-       */
-      size_t size() const noexcept;
+    /**
+     * @brief Get the number of people in the database.
+     *
+     * @return The number of people in the database.
+     */
+    size_t size() const noexcept;
 
-      /**
-       * @brief Computes the distance between two eye codes.
-       *
-       * @param types::EyeCode The first eye code.
-       * @param types::EyeCode The second eye code.
-       * @return double The computed distance.
-       */
-      static double distance(const types::EyeCode&, const types::EyeCode&);
+    /**
+     * @brief Computes the distance between two eye codes.
+     *
+     * @param types::EyeCode The first eye code.
+     * @param types::EyeCode The second eye code.
+     * @return double The computed distance.
+     */
+    static double distance(const types::EyeCode&, const types::EyeCode&);
 
-    protected:
-      /**
-       * @brief Constructs new Database object.
-       */
-      Database() noexcept = default;
+  protected:
+    /**
+     * @brief Constructs new Database object.
+     */
+    Database() noexcept = default;
 
-      /**
-       * @brief Destroys the Database object.
-       */
-      virtual ~Database() noexcept = default;
+    /**
+     * @brief Destroys the Database object.
+     */
+    virtual ~Database() noexcept = default;
 
-    private:
-      /**
-       * @brief Load a person from the database.
-       * @param fs::path The path to the person's directory.
-       *
-       * @return An optional containing the Person if successfully loaded, or std::nullopt otherwise.
-       */
-      static std::optional<Person> loadPerson(const fs::path& dir);
+  private:
+    /**
+     * @brief Load a person from the database.
+     * @param fs::path The path to the person's directory.
+     *
+     * @return An optional containing the Person if successfully loaded, or
+     * std::nullopt otherwise.
+     */
+    static std::optional<Person> loadPerson(const fs::path& dir);
 
-      /**
-       * @brief Save a person to the database.
-       *
-       * @param fs::path The path to the person's directory.
-       * @param Person The person to save.
-       */
-      static void savePerson(const fs::path&, const Person&, const cv::Mat&);
+    /**
+     * @brief Save a person to the database.
+     *
+     * @param fs::path The path to the person's directory.
+     * @param Person The person to save.
+     */
+    static void savePerson(const fs::path&, const Person&, const cv::Mat&);
 
-    private:
-      fs::path m_path;
-      std::map<QUuid, Person> m_people;
+  private:
+    fs::path m_path;
+    std::map<QUuid, Person> m_people;
   };
 } // namespace db
