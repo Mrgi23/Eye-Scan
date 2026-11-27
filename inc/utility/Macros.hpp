@@ -10,10 +10,9 @@
  *
  * @param ClassName Name of the class for which copy operations are disabled.
  */
-#define DISABLE_COPY(ClassName) \
-  ClassName(const ClassName&) = delete; \
-  ClassName &operator=(const ClassName&) = delete;
-
+#define DISABLE_COPY(ClassName)                                                     \
+  ClassName(const ClassName&) = delete;                                             \
+  ClassName& operator=(const ClassName&) = delete;
 
 /**
  * @def DISABLE_MOVE
@@ -21,16 +20,17 @@
  *
  * @param ClassName Name of the class for which move operations are disabled.
  */
-#define DISABLE_MOVE(ClassName) \
-  ClassName(ClassName&&) = delete; \
-  ClassName &operator=(ClassName&&) = delete;
+#define DISABLE_MOVE(ClassName)                                                     \
+  ClassName(ClassName&&) = delete;                                                  \
+  ClassName& operator=(ClassName&&) = delete;
 
 /**
  * @def DISABLE_COPY_AND_MOVE
  * @brief Disable both copy and move operations for the given class.
  *
- * @param ClassName Name of the class for which copy and move operations are disabled.
+ * @param ClassName Name of the class for which copy and move operations are
+ * disabled.
  */
-#define DISABLE_COPY_AND_MOVE(ClassName) \
-  DISABLE_COPY(ClassName) \
+#define DISABLE_COPY_AND_MOVE(ClassName)                                            \
+  DISABLE_COPY(ClassName)                                                           \
   DISABLE_MOVE(ClassName)

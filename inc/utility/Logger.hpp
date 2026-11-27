@@ -11,7 +11,8 @@
 
 /**
  * @namespace logger
- * @brief Lightweight logging utilities for informational, warning, and error messages.
+ * @brief Lightweight logging utilities for informational, warning, and error
+ * messages.
  */
 namespace logger
 {

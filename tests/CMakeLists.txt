@@ -51,15 +51,3 @@ target_link_libraries(
 # ===== Coverage =====
 target_compile_options(tests PRIVATE --coverage -O0 -g -fno-elide-constructors)
 target_link_options(tests PRIVATE --coverage)
-
-set(REPORT_DIR "${ROOT_DIR}/coverage")
-file(MAKE_DIRECTORY "${REPORT_DIR}")
-
-add_custom_target(
-  coverage
-  COMMAND ./tests
-  COMMAND lcov --capture --directory . -o raw.info --ignore-errors inconsistent,inconsistent --ignore-errors mismatch,mismatch --rc geninfo_unexecuted_blocks=1 > /dev/null
-  COMMAND lcov -e raw.info "${INCLUDE_DIR}/*" "${SOURCES_DIR}/*" -o coverage.info --ignore-errors unused,unused > /dev/null
-  COMMAND sed -i "/D0Ev/d" coverage.info
-  COMMAND genhtml coverage.info -o "${REPORT_DIR}"
-)

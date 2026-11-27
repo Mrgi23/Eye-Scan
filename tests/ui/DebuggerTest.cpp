@@ -2,12 +2,12 @@
  * SPDX-License-Identifier: Apache-2.0
  * Copyright (c) 2026 Aleksa Markovic <aleksamarkovic96@outlook.com>
  */
-#include "utility/Logger.hpp"
 #include "ui/Debugger.hpp"
+#include "utility/Logger.hpp"
 
-#include <gtest/gtest.h>
 #include <QString>
 #include <QTest>
+#include <gtest/gtest.h>
 
 TEST(Debugger, SendMessages)
 {
@@ -40,7 +40,10 @@ TEST(Debugger, SendMessages)
   }
 
   {
-    EXPECT_THROW(logger::Error("Test error", types::Error::INVALID_ARGUMENT), std::invalid_argument);
+    EXPECT_THROW(
+      logger::Error("Test error", types::Error::INVALID_ARGUMENT),
+      std::invalid_argument
+    );
     QTest::qWait(50);
 
     QTextEdit* edit = debugger.findChild<QTextEdit*>();

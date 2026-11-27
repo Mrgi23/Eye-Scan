@@ -8,7 +8,9 @@
 
 namespace types
 {
-  Frame::Frame(uint16_t* pixels, const Size& size, size_t stride,  std::shared_ptr<void> owner) noexcept
+  Frame::Frame(
+    uint16_t* pixels, const Size& size, size_t stride, std::shared_ptr<void> owner
+  ) noexcept
     : m_pixels(pixels), m_size(size), m_stride(stride), m_owner(std::move(owner))
   {
   }
@@ -19,11 +21,8 @@ namespace types
       return cv::Mat();
 
     cv::Mat image(
-      static_cast<int>(m_size.height),
-      static_cast<int>(m_size.width),
-      CV_16UC1,
-      const_cast<uint16_t*>(m_pixels),
-      m_stride
+      static_cast<int>(m_size.height), static_cast<int>(m_size.width), CV_16UC1,
+      const_cast<uint16_t*>(m_pixels), m_stride
     );
 
     cv::Mat result;

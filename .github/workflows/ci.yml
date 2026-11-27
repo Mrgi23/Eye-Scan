@@ -12,9 +12,8 @@ permissions:
   contents: read
 
 env:
-  TEST_DIR: "tests"
-  BUILD_DIR: "tests/build/Release"
-  COVERAGE_DIR: "coverage"
+  WORK_DIR: "tests"
+  OUTPUT_DIR: "coverage"
   QT_WAYLAND_DISABLE_WINDOWDECORATION: 1
 
 jobs:
@@ -29,56 +28,44 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup C++ Toolchain
-        uses: ./.github/actions/setup
+      - name: Install Dependencies
+        run: |
+          ./scripts/install-packages.sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Check Formatting
+        run: ./scripts/clang-format.sh check
 
       - name: Setup Wayland
         uses: ./.github/actions/wayland
 
       - name: Configure & Build
-        run: |
-          set -euo pipefail
-          export PATH="$HOME/.local/bin:$PATH"
-
-          cd "${TEST_DIR}"
-          conan install . --build=missing
-          cmake -G Ninja --preset conan-release
-          cmake --build --preset conan-release --parallel $(( $(nproc) / 2 ))
+        run: ./scripts/build.sh --dir "${WORK_DIR}"
 
       - name: Run Tests
-        run: |
-          set -euo pipefail
-
-          mkdir -p "${COVERAGE_DIR}"
-          cd "${BUILD_DIR}"
-          ./tests --gtest_output=xml:results.xml
-
-          lcov --capture --directory . -o raw.info --ignore-errors inconsistent,inconsistent --ignore-errors mismatch,mismatch --rc geninfo_unexecuted_blocks=1 > /dev/null
-          lcov --extract raw.info "${GITHUB_WORKSPACE}/inc/*" "${GITHUB_WORKSPACE}/src/*" -o coverage.info --ignore-errors unused,unused > /dev/null
-          sed -i "/D0Ev/d" coverage.info
-          genhtml coverage.info -o "${GITHUB_WORKSPACE}/${COVERAGE_DIR}/"
-
-      - name: Upload Coverage Report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ${{ env.BUILD_DIR }}/coverage.info
-          report_type: coverage
-          disable_search: true
-          fail_ci_if_error: true
+        run: ./scripts/run-tests.sh --coverage --output-dir "${OUTPUT_DIR}" --format xml
 
       - name: Upload Test Results to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ${{ env.BUILD_DIR }}/results.xml
+          files: ${{ env.OUTPUT_DIR }}/results.xml
           report_type: test_results
+
+      - name: Upload Coverage Report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ env.OUTPUT_DIR }}/coverage.info
+          report_type: coverage
+          disable_search: true
+          fail_ci_if_error: true
 
       - name: Upload HTML Coverage Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: coverage-html
-          path: ${{ env.COVERAGE_DIR }}
+          path: ${{ env.OUTPUT_DIR }}
           retention-days: 1
           if-no-files-found: error
 
